@@ -4,7 +4,7 @@
   <title><![CDATA[Иногда я делаю сайты]]></title>
   <link href="http://ggoha.github.io/atom.xml" rel="self"/>
   <link href="http://ggoha.github.io/"/>
-  <updated>2016-12-01T11:05:14+03:00</updated>
+  <updated>2016-12-01T11:15:35+03:00</updated>
   <id>http://ggoha.github.io/</id>
   <author>
     <name><![CDATA[ggoha]]></name>
@@ -12,5 +12,14 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Пробный пост]]></title>
+    <link href="http://ggoha.github.io/blog/2016/12/01/probnyi-post/"/>
+    <updated>2016-12-01T11:12:15+03:00</updated>
+    <id>http://ggoha.github.io/blog/2016/12/01/probnyi-post</id>
+    <content type="html"><![CDATA[
+]]></content>
+  </entry>
   
 </feed>
