@@ -2,10 +2,10 @@
 #      Main Configs       #
 # ----------------------- #
 
-url: http://yoursite.com
-title: My Octopress Blog
-subtitle: A blogging framework for hackers.
-author: Your Name
+url: http://ggoha.github.io
+title: Иногда я делаю сайты
+subtitle: Что-то вроде персонального сайта.
+author: ggoha
 simple_search: https://www.google.com/search
 description:
 
