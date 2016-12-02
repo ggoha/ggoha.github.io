@@ -4,7 +4,7 @@
   <title><![CDATA[Иногда я делаю сайты]]></title>
   <link href="http://ggoha.github.io/atom.xml" rel="self"/>
   <link href="http://ggoha.github.io/"/>
-  <updated>2016-12-01T15:52:33+03:00</updated>
+  <updated>2016-12-02T17:18:37+03:00</updated>
   <id>http://ggoha.github.io/</id>
   <author>
     <name><![CDATA[ggoha]]></name>
@@ -14,13 +14,90 @@
 
   
   <entry>
+    <title type="html"><![CDATA[Удаление ошибок роутинга из Rollbar]]></title>
+    <link href="http://ggoha.github.io/blog/2016/12/02/udalieniie-oshibok-routingha-iz-rollbar/"/>
+    <updated>2016-12-02T15:35:35+03:00</updated>
+    <id>http://ggoha.github.io/blog/2016/12/02/udalieniie-oshibok-routingha-iz-rollbar</id>
+    <content type="html"><![CDATA[<p><a href="https://rollbar.com/">Rollbar</a> - замечательный инструмент для ловли ошибок на production, он избавляет от необходимости grep-ать логи и представляет сообщения об ошибках в крайне удобной форме и с массой полезной информации. К тому же он имеет бесплатное ограничение в 5000 ошибок, поэтому постараемся уменьшить количество ошибок долетающих до Rollbar</p>
+
+<!-- more -->
+
+
+<h2>Rollbar</h2>
+
+<p>Данный пост посвящен не столь rollbar, сколько исправлению ошибок роутинга, но, возможно, я исправлю это упущение</p>
+
+<h2>No route matches [GET] &ldquo;/ffhnzushqco.html&rdquo;</h2>
+
+<p>Вот такого рода запросы частенько сыплются на мой сервер.
+<img src="http://ggoha.github.io/images/rollbar.png"></p>
+
+<p>Их цель естественно понятна, но все равно забавно наблюдать зоопарк запросов и бразузеров многие из которых упрямо стучатся на admin.php и /wordpress
+Для обработки таких ошибок добавим им корректную обработку в роутинге.
+В самый конец <strong>routes.rb</strong> добавим обработку всех остальных случаев, которые не нашли совпадения с прописанным нами роутингом.</p>
+
+<figure class='code'><figcaption><span>routes.rb</span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='rb'><span class='line'><span class="n">match</span> <span class="s1">&#39;*a&#39;</span><span class="p">,</span> <span class="ss">to</span><span class="p">:</span> <span class="s1">&#39;application#page_404&#39;</span><span class="p">,</span> <span class="ss">via</span><span class="p">:</span> <span class="o">[</span><span class="ss">:get</span><span class="p">,</span> <span class="ss">:post</span><span class="o">]</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Так же при желании можно ловить и delete, и put, и path.
+В контролере пропишем</p>
+
+<figure class='code'><figcaption><span>application_controller.rb </span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='rb'><span class='line'>  <span class="k">def</span> <span class="nf">page_404</span>
+</span><span class='line'>    <span class="n">render</span> <span class="ss">file</span><span class="p">:</span> <span class="s2">&quot;</span><span class="si">#{</span><span class="no">Rails</span><span class="o">.</span><span class="n">root</span><span class="si">}</span><span class="s2">/public/404.html&quot;</span><span class="p">,</span> <span class="ss">layout</span><span class="p">:</span> <span class="kp">false</span><span class="p">,</span> <span class="ss">status</span><span class="p">:</span> <span class="mi">404</span>
+</span><span class='line'>  <span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Мы успешно обработали все неизвестные запросы.</p>
+
+<h2>Дополнительно</h2>
+
+<p>Совсем терять эти ошибки не хочется, кроме мусора там попадаются, например, ошибки получения картинок с нашего сайта, что необходимо исправлять. Как вариант, предлагается записывать все такие обращения просто в файл.
+Для этого изменим наш контроллер</p>
+
+<figure class='code'><figcaption><span>application_controller.rb </span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='rb'><span class='line'>  <span class="k">def</span> <span class="nf">page_404</span>
+</span><span class='line'>    <span class="no">File</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">#{</span><span class="no">Rails</span><span class="o">.</span><span class="n">root</span><span class="si">}</span><span class="s2">/log/404.log&quot;</span><span class="p">,</span> <span class="s1">&#39;a&#39;</span><span class="p">)</span> <span class="p">{</span> <span class="o">|</span><span class="n">file</span><span class="o">|</span> <span class="n">file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">#{</span><span class="n">request</span><span class="o">.</span><span class="n">original_url</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span> <span class="p">}</span>
+</span><span class='line'>    <span class="n">render</span> <span class="ss">file</span><span class="p">:</span> <span class="s2">&quot;</span><span class="si">#{</span><span class="no">Rails</span><span class="o">.</span><span class="n">root</span><span class="si">}</span><span class="s2">/public/404.html&quot;</span><span class="p">,</span> <span class="ss">layout</span><span class="p">:</span> <span class="kp">false</span><span class="p">,</span> <span class="ss">status</span><span class="p">:</span> <span class="mi">404</span>
+</span><span class='line'>  <span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Здесь мы открываем файл на дозапись и сохраняет адрес страницы, которую мы не можем найти. Кроме того, чтобы этот файл не перезатирался при деплое, он сохраняется в log.</p>
+
+<p>Чтобы Capistrano не перезатирал папки при деплое</p>
+
+<figure class='code'><figcaption><span>example deploy.rb </span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='rb'><span class='line'><span class="o">.</span><span class="n">.</span><span class="o">.</span>
+</span><span class='line'><span class="n">set</span> <span class="ss">:linked_dirs</span><span class="p">,</span>  <span class="sx">%w{bin log tmp/pids tmp/cache tmp/sockets vendor/bundle public/system}</span>
+</span><span class='line'><span class="o">.</span><span class="n">.</span><span class="o">.</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+]]></content>
+  </entry>
+  
+  <entry>
     <title type="html"><![CDATA[Пост про этот пост]]></title>
     <link href="http://ggoha.github.io/blog/2016/12/01/post-pro-etot-post/"/>
     <updated>2016-12-01T15:29:26+03:00</updated>
     <id>http://ggoha.github.io/blog/2016/12/01/post-pro-etot-post</id>
-    <content type="html"><![CDATA[<h2>Введение</h2>
-
-<p>В какой-то момент я решил все-таки перенести свою маленькую записную книжку по тем приемам, которые я использовал во время создания различных сайтов, из отдельного списка в Trello в нечто более осязаемое, например, блог. Ну и еще немного практики никому не мешало.</p>
+    <content type="html"><![CDATA[<p>В какой-то момент я решил все-таки перенести свою маленькую записную книжку по тем приемам, которые я использовал во время создания различных сайтов, из отдельного списка в Trello в нечто более осязаемое, например, блог. Ну и еще немного практики никому не мешало.</p>
 
 <!-- more -->
 
@@ -62,6 +139,23 @@
 <p>Данные команды перегенируют статические страницы и выводят результат по-умолчанию на <a href="localhost:4000">localhost:4000</a></p>
 
 <h3>Настройка</h3>
+
+<h4>Русификация</h4>
+
+<p>Для изменения большинства вещей необходимо править файлы папки source.
+Для категорий и кнопки далее нужно править <strong>_config.yml</strong></p>
+
+<figure class='code'><figcaption><span>_config.yml </span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='yaml'><span class='line'><span class="l-Scalar-Plain">category_title_prefix</span><span class="p-Indicator">:</span> <span class="s">&quot;Тег:</span><span class="nv"> </span><span class="s">&quot;</span>
+</span><span class='line'><span class="nn">...</span>
+</span><span class='line'><span class="l-Scalar-Plain">excerpt_link</span><span class="p-Indicator">:</span> <span class="s">&quot;Далее</span><span class="nv"> </span><span class="s">&amp;rarr;&quot;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h4>Изменение даты</h4>
 
 <h3>Хостинг</h3>
 
@@ -130,6 +224,8 @@
 Далее идет пространство для непостредственно написания текста поста. Для этого используется язык разметки Markdown. <a href="https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet">Синтаксис</a> очень простой, практически ничего не отвлекает от непосредственно написания текста.</p>
 
 <h3>Добавление картинок</h3>
+
+<p>Дополнительнительную информацию вы всегда можете получить <a href="https://github.com/octopress/image-tag">здесь</a></p>
 
 <h3>Оформление кода</h3>
 

@@ -1,0 +1,261 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Удаление ошибок роутинга из Rollbar - Иногда я делаю сайты</title>
+  <meta name="author" content="ggoha">
+
+  
+  <meta name="description" content="Rollbar - замечательный инструмент для ловли ошибок на production, он избавляет от необходимости grep-ать логи и представляет сообщения об ошибках в &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://ggoha.github.io/blog/2016/12/02/udalieniie-oshibok-routingha-iz-rollbar/">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/atom.xml" rel="alternate" title="Иногда я делаю сайты" type="application/atom+xml">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  <script>!window.jQuery && document.write(unescape('%3Cscript src="/javascripts/libs/jquery.min.js"%3E%3C/script%3E'))</script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="//fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="//fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+  
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">Иногда я делаю сайты</a></h1>
+  
+    <h2>Что-то вроде персонального блога.</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="https://www.google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="sitesearch" value="ggoha.github.io">
+    <input class="search" type="text" name="q" results="0" placeholder="Поиск"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Блог</a></li>
+  <li><a href="/blog/archives">Архив</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">Удаление ошибок роутинга из Rollbar</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+<time class='entry-date' datetime='2016-12-02T15:35:35+03:00'><span class='date'><span class='date-month'>Dec</span> <span class='date-day'>2</span><span class='date-suffix'>nd</span>, <span class='date-year'>2016</span></span> <span class='time'>3:35 pm</span></time>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p><a href="https://rollbar.com/">Rollbar</a> - замечательный инструмент для ловли ошибок на production, он избавляет от необходимости grep-ать логи и представляет сообщения об ошибках в крайне удобной форме и с массой полезной информации. К тому же он имеет бесплатное ограничение в 5000 ошибок, поэтому постараемся уменьшить количество ошибок долетающих до Rollbar</p>
+
+<!-- more -->
+
+
+<h2>Rollbar</h2>
+
+<p>Данный пост посвящен не столь rollbar, сколько исправлению ошибок роутинга, но, возможно, я исправлю это упущение</p>
+
+<h2>No route matches [GET] &ldquo;/ffhnzushqco.html&rdquo;</h2>
+
+<p>Вот такого рода запросы частенько сыплются на мой сервер.
+<img src="/images/rollbar.png"></p>
+
+<p>Их цель естественно понятна, но все равно забавно наблюдать зоопарк запросов и бразузеров многие из которых упрямо стучатся на admin.php и /wordpress
+Для обработки таких ошибок добавим им корректную обработку в роутинге.
+В самый конец <strong>routes.rb</strong> добавим обработку всех остальных случаев, которые не нашли совпадения с прописанным нами роутингом.</p>
+
+<figure class='code'><figcaption><span>routes.rb</span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='rb'><span class='line'><span class="n">match</span> <span class="s1">&#39;*a&#39;</span><span class="p">,</span> <span class="ss">to</span><span class="p">:</span> <span class="s1">&#39;application#page_404&#39;</span><span class="p">,</span> <span class="ss">via</span><span class="p">:</span> <span class="o">[</span><span class="ss">:get</span><span class="p">,</span> <span class="ss">:post</span><span class="o">]</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Так же при желании можно ловить и delete, и put, и path.
+В контролере пропишем</p>
+
+<figure class='code'><figcaption><span>application_controller.rb </span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='rb'><span class='line'>  <span class="k">def</span> <span class="nf">page_404</span>
+</span><span class='line'>    <span class="n">render</span> <span class="ss">file</span><span class="p">:</span> <span class="s2">&quot;</span><span class="si">#{</span><span class="no">Rails</span><span class="o">.</span><span class="n">root</span><span class="si">}</span><span class="s2">/public/404.html&quot;</span><span class="p">,</span> <span class="ss">layout</span><span class="p">:</span> <span class="kp">false</span><span class="p">,</span> <span class="ss">status</span><span class="p">:</span> <span class="mi">404</span>
+</span><span class='line'>  <span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Мы успешно обработали все неизвестные запросы.</p>
+
+<h2>Дополнительно</h2>
+
+<p>Совсем терять эти ошибки не хочется, кроме мусора там попадаются, например, ошибки получения картинок с нашего сайта, что необходимо исправлять. Как вариант, предлагается записывать все такие обращения просто в файл.
+Для этого изменим наш контроллер</p>
+
+<figure class='code'><figcaption><span>application_controller.rb </span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='rb'><span class='line'>  <span class="k">def</span> <span class="nf">page_404</span>
+</span><span class='line'>    <span class="no">File</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">#{</span><span class="no">Rails</span><span class="o">.</span><span class="n">root</span><span class="si">}</span><span class="s2">/log/404.log&quot;</span><span class="p">,</span> <span class="s1">&#39;a&#39;</span><span class="p">)</span> <span class="p">{</span> <span class="o">|</span><span class="n">file</span><span class="o">|</span> <span class="n">file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">#{</span><span class="n">request</span><span class="o">.</span><span class="n">original_url</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span> <span class="p">}</span>
+</span><span class='line'>    <span class="n">render</span> <span class="ss">file</span><span class="p">:</span> <span class="s2">&quot;</span><span class="si">#{</span><span class="no">Rails</span><span class="o">.</span><span class="n">root</span><span class="si">}</span><span class="s2">/public/404.html&quot;</span><span class="p">,</span> <span class="ss">layout</span><span class="p">:</span> <span class="kp">false</span><span class="p">,</span> <span class="ss">status</span><span class="p">:</span> <span class="mi">404</span>
+</span><span class='line'>  <span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Здесь мы открываем файл на дозапись и сохраняет адрес страницы, которую мы не можем найти. Кроме того, чтобы этот файл не перезатирался при деплое, он сохраняется в log.</p>
+
+<p>Чтобы Capistrano не перезатирал папки при деплое</p>
+
+<figure class='code'><figcaption><span>example deploy.rb </span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='rb'><span class='line'><span class="o">.</span><span class="n">.</span><span class="o">.</span>
+</span><span class='line'><span class="n">set</span> <span class="ss">:linked_dirs</span><span class="p">,</span>  <span class="sx">%w{bin log tmp/pids tmp/cache tmp/sockets vendor/bundle public/system}</span>
+</span><span class='line'><span class="o">.</span><span class="n">.</span><span class="o">.</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Опубликовано <span class="fn">ggoha</span></span>
+
+      
+
+
+
+
+<time class='entry-date' datetime='2016-12-02T15:35:35+03:00'><span class='date'><span class='date-month'>Dec</span> <span class='date-day'>2</span><span class='date-suffix'>nd</span>, <span class='date-year'>2016</span></span> <span class='time'>3:35 pm</span></time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/rollbar/'>rollbar</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <a href="//twitter.com/share" class="twitter-share-button" data-url="http://ggoha.github.io/blog/2016/12/02/udalieniie-oshibok-routingha-iz-rollbar/" data-via="" data-counturl="http://ggoha.github.io/blog/2016/12/02/udalieniie-oshibok-routingha-iz-rollbar/" >Tweet</a>
+  
+  
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2016/12/01/post-pro-etot-post/" title="Previous Post: Пост про этот пост">&laquo; Пост про этот пост</a>
+      
+      
+    </p>
+  </footer>
+</article>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>Недавние посты</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2016/12/02/udalieniie-oshibok-routingha-iz-rollbar/">Удаление ошибок роутинга из Rollbar</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2016/12/01/post-pro-etot-post/">Пост про этот пост</a>
+      </li>
+    
+  </ul>
+</section>
+
+
+
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2016 - ggoha -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+
+
+
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = '//platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>

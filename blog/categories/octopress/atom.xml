@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Тег: Octopress | Иногда я делаю сайты]]></title>
+  <link href="http://ggoha.github.io/blog/categories/octopress/atom.xml" rel="self"/>
+  <link href="http://ggoha.github.io/"/>
+  <updated>2016-12-02T17:18:37+03:00</updated>
+  <id>http://ggoha.github.io/</id>
+  <author>
+    <name><![CDATA[ggoha]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Пост про этот пост]]></title>
+    <link href="http://ggoha.github.io/blog/2016/12/01/post-pro-etot-post/"/>
+    <updated>2016-12-01T15:29:26+03:00</updated>
+    <id>http://ggoha.github.io/blog/2016/12/01/post-pro-etot-post</id>
+    <content type="html"><![CDATA[<p>В какой-то момент я решил все-таки перенести свою маленькую записную книжку по тем приемам, которые я использовал во время создания различных сайтов, из отдельного списка в Trello в нечто более осязаемое, например, блог. Ну и еще немного практики никому не мешало.</p>
+
+<!-- more -->
+
+
+<h2>Выбор</h2>
+
+<p>Писать свой собственный движок для блога я не стал, возможно в качестве первого(ну или почти первого) знакомства с rails это хорошая идея(<a href="https://www.railstutorial.org/" title="Ruby on Rails Tutorial (Rails 5)">1</a>), но для меня это все-таки больше записная книжка. Выбор осуществлялся достаточно просто, путем захода на <a href="https://www.ruby-toolbox.com/categories/Blog_Engines">The Ruby Toolbox</a> и беглым знакомством с уже существующими решениями. Так мой выбор пал на <a href="http://octopress.org">Octopress</a></p>
+
+<h2>Установка</h2>
+
+<p>Будем считать что у нас уже есть установленный rvm(или rbenv) а так же ruby.
+<figure class='code'><figcaption><span>bash </span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>git clone git://github.com/imathis/octopress.git octopress
+</span><span class='line'>cd octopress
+</span><span class='line'>bundle install</span></code></pre></td></tr></table></div></figure>
+Устанавливаем для начала дефолтную тему
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>rake install[&lsquo;THEME_NAME&rsquo;]
+</span><span class='line'>rake generate</span></code></pre></td></tr></table></div></figure>
+Конфигурационный файл можно пока не трогать
+Посмотреть, что получается из коробки можно следующим образом
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>rake generate
+</span><span class='line'>rake preview</span></code></pre></td></tr></table></div></figure>
+Данные команды перегенируют статические страницы и выводят результат по-умолчанию на <a href="localhost:4000">localhost:4000</a></p>
+
+<h3>Настройка</h3>
+
+<h4>Русификация</h4>
+
+<p>Для изменения большинства вещей необходимо править файлы папки source.
+Для категорий и кнопки далее нужно править <strong>_config.yml</strong>
+<figure class='code'><figcaption><span>_config.yml </span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='yaml'><span class='line'><span class="l-Scalar-Plain">category_title_prefix</span><span class="p-Indicator">:</span> <span class="nl">&amp;ldquo</span><span class="l-Scalar-Plain">;Тег</span><span class="p-Indicator">:</span> <span class="nl">&amp;rdquo</span><span class="l-Scalar-Plain">;</span>
+</span><span class='line'><span class="nl">&amp;hellip</span><span class="l-Scalar-Plain">;</span>
+</span><span class='line'><span class="l-Scalar-Plain">excerpt_link</span><span class="p-Indicator">:</span> <span class="nl">&amp;ldquo</span><span class="l-Scalar-Plain">;Далее &amp;rarr;&amp;rdquo;</span>
+</span></code></pre></td></tr></table></div></figure></p>
+
+<h4>Изменение даты</h4>
+
+<h3>Хостинг</h3>
+
+<p>Так как в результате работы получаются статические страницы, то вполне резонно использовать не полноценный сервер, а просто хостера статических сайтов, благо Octopress предлагает <a href="http://octopress.org/docs/deploying/">3 варианта</a>. Я остановился на GitHub Pages.<br/>
+<a href="http://isizov.ru/github-kak-hosting-dlya-sajtov/">После создания соответствующего репозитория</a>
+Необходимо выполнить
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>rake setup_github_pages</span></code></pre></td></tr></table></div></figure>
+и указать SSH или HTTPS URL до вашего репозитория.
+Затем надо выполнить
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>rake generate
+</span><span class='line'>rake deploy</span></code></pre></td></tr></table></div></figure>
+или одной командой
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>rake gen_deploy</span></code></pre></td></tr></table></div></figure>
+Затем надо выполнить
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>git add .
+</span><span class='line'>git commit -m &lsquo;your message&rsquo;
+</span><span class='line'>git push origin source</span></code></pre></td></tr></table></div></figure></p>
+
+<h2>Создание поста</h2>
+
+<p>Теперь мы получили пустой блог. Займемся его наполнением.
+Для добавления нового поста, например, этого, введем
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>rake new_post[&ldquo;Пост про этот пост&rdquo;]</span></code></pre></td></tr></table></div></figure>
+После этого название транслитерируется и становится доступным по адресу, структура которого указана в <strong>_config.yml</strong>
+Сам файл будет почти пустым</p>
+
+<h2><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>&lt;/h2>
+</span><span class='line'>
+</span><span class='line'>&lt;p>layout: post
+</span><span class='line'>title: &ldquo;Пост про данный пост&rdquo;
+</span><span class='line'>date: 2016-12-01 11:12:15 +0300
+</span><span class='line'>comments: true&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;h2>categories: &lt;/h2>
+</span><span class='line'>
+</span><span class='line'>&lt;p></span></code></pre></td></tr></table></div></figure>
+Здесь можно добавить категории и дополнительно указать автора.
+Далее идет пространство для непостредственно написания текста поста. Для этого используется язык разметки Markdown. <a href="https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet">Синтаксис</a> очень простой, практически ничего не отвлекает от непосредственно написания текста.</p>
+
+<h3>Добавление картинок</h3>
+
+<p>Дополнительнительную информацию вы всегда можете получить <a href="https://github.com/octopress/image-tag">здесь</a></p>
+
+<h3>Оформление кода</h3>
+
+<p>В моем случае, я часто использовал вставки кода, поэтому важно чтобы они были красиво оформленны. В Markdown есть выделение и подсветка синтакиса, но специальный плагин <a href="https://github.com/octopress/codeblock">Codeblock</a> делает это гораздо красивее. В частности все вставки кода в этой статье были выполнены именно с его использованием.
+Дополнительнительную информацию вы всегда можете получить <a href="https://github.com/octopress/codeblock">здесь</a></p>
+]]></content>
+  </entry>
+  
+</feed>
