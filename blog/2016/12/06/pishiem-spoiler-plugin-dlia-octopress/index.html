@@ -1,0 +1,329 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Пишем Spoiler-plugin для Octopress - Иногда я делаю сайты</title>
+  <meta name="author" content="ggoha">
+
+  
+  <meta name="description" content="Мне изначально хотелось скрывать некоторые части постов под спойлер, например вот так Я смог найти только вот это
+Но меня это не устраивало, так как &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://ggoha.github.io/blog/2016/12/06/pishiem-spoiler-plugin-dlia-octopress/">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/atom.xml" rel="alternate" title="Иногда я делаю сайты" type="application/atom+xml">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  <script>!window.jQuery && document.write(unescape('%3Cscript src="/javascripts/libs/jquery.min.js"%3E%3C/script%3E'))</script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="//fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="//fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+  
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">Иногда я делаю сайты</a></h1>
+  
+    <h2>Что-то вроде персонального блога.</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="https://www.google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="sitesearch" value="ggoha.github.io">
+    <input class="search" type="text" name="q" results="0" placeholder="Поиск"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Блог</a></li>
+  <li><a href="/blog/archives">Архив</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">Пишем Spoiler-plugin для Octopress</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+<time class='entry-date' datetime='2016-12-06T18:08:30+03:00'><span class='date'><span class='date-month'>Dec</span> <span class='date-day'>6</span><span class='date-suffix'>th</span>, <span class='date-year'>2016</span></span> <span class='time'>6:08 pm</span></time>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>Мне изначально хотелось скрывать некоторые части постов под спойлер, например вот так
+<img src="/images/spoiler.png">
+Я смог найти только вот <a href="https://github.com/seanhagen/octopress-spoiler-tag/blob/master/spoiler.rb">это</a>
+Но меня это не устраивало, так как это был однострочный спойлер, например, для &ldquo;спойлеров&rdquo; в фильме. Я же хотел скрывать некоторую часть текста, например, описание исправлений ошибок, которые в большинстве случаев не имеет смысла показывать.
+Поэтому я решил написать его сам. Кроме того, я решил не использовать js, а обойтись только HTML/CSS.</p>
+
+<!-- more -->
+
+
+<script async src="//jsfiddle.net/hephunLe/16/embed/"></script>
+
+
+<h2>CSS3</h2>
+
+<p>Основная идея следующая
+Переключатель представляет собой checkbox, для нажатого check с помощью селектора + (выбирающего следующие элементы) мы устанавливаем display:none для спойлерных объектов.</p>
+
+<div id='octopress-spoiler-tag'><input type='checkbox' id='octopress-spoiler-tag-4' class='octopress-spoiler-tag-head' checked/><label for='octopress-spoiler-tag-4'>Пояснение#1</label><div id='octopress-spoiler'>
+  <figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>.octopress-spoiler-tag + label {
+</span><span class='line'>      cursor: pointer;
+</span><span class='line'>    }</span></code></pre></td></tr></table></div></figure>
+  Позволяет изменять значение checkbox-a при нажатии на связанную с ним по id надпись. 
+</div></div>
+
+
+
+
+<div id='octopress-spoiler-tag'><input type='checkbox' id='octopress-spoiler-tag-5' class='octopress-spoiler-tag-head' checked/><label for='octopress-spoiler-tag-5'>Пояснение#2</label><div id='octopress-spoiler'>
+  <figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>.octopress-spoiler-tag:not(checked) {
+</span><span class='line'>      position: absolute;
+</span><span class='line'>      opacity: 0;
+</span><span class='line'>    }</span></code></pre></td></tr></table></div></figure>
+  Убирает с глаз долой дефолтный checkbox.
+</div></div>
+
+
+<h2>Ruby</h2>
+
+<p>Основную структуру плагина я подсматривал у <a href="https://github.com/imathis/octopress/blob/master/plugins/blockquote.rb">blockquote</a>.</p>
+
+<figure class='code'><figcaption><span>spoiler.rb </span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+</pre></td><td class='code'><pre><code class='rb'><span class='line'><span class="k">module</span> <span class="nn">Jekyll</span>
+</span><span class='line'>  <span class="k">class</span> <span class="nc">Spoiler</span> <span class="o">&lt;</span> <span class="no">Liquid</span><span class="o">::</span><span class="no">Block</span>
+</span><span class='line'>  <span class="c1">#Зависит от того, хотим ли мы блок (многострочный как blockquote) или тег (однострочный как image)</span>
+</span><span class='line'>    <span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="n">tag_name</span><span class="p">,</span> <span class="n">text</span><span class="p">,</span> <span class="n">tokens</span><span class="p">)</span>
+</span><span class='line'>    <span class="c1">#собственно инициализация</span>
+</span><span class='line'>      <span class="c1">#здесь нам делать особо нечего</span>
+</span><span class='line'>      <span class="c1">#но возможно есть что инициализировать классу, что выше в цепочке наследования</span>
+</span><span class='line'>      <span class="k">super</span>
+</span><span class='line'>      <span class="vi">@text</span><span class="o">=</span><span class="n">text</span>
+</span><span class='line'>    <span class="k">end</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">def</span> <span class="nf">render</span><span class="p">(</span><span class="n">context</span><span class="p">)</span>
+</span><span class='line'>    <span class="c1">#и вывод html</span>
+</span><span class='line'>      <span class="c1">#получаем результат render-a предка</span>
+</span><span class='line'>      <span class="n">quote</span> <span class="o">=</span> <span class="k">super</span>
+</span><span class='line'>      <span class="c1">#оборачиваем в div, добавлем checkbox и label</span>
+</span><span class='line'>      <span class="s2">&quot;&lt;div id=&#39;octopress-spoiler-tag&#39;&gt;&lt;input type=&#39;checkbox&#39; id=&#39;octopress-spoiler-tag&#39; class=&#39;octopress-spoiler-tag-head&#39; checked/&gt;&lt;label for=&#39;octopress-spoiler-tag&#39;&gt;</span><span class="si">#{</span><span class="vi">@text</span><span class="si">}</span><span class="s2">&lt;/label&gt;&lt;div id=&#39;octopress-spoiler&#39;&gt;&quot;</span><span class="o">+</span><span class="n">quote</span><span class="o">+</span><span class="s2">&quot;&lt;/div&gt;&lt;/div&gt;&quot;</span>
+</span><span class='line'>    <span class="k">end</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'><span class="k">end</span>
+</span><span class='line'><span class="no">Liquid</span><span class="o">::</span><span class="no">Template</span><span class="o">.</span><span class="n">register_tag</span><span class="p">(</span><span class="s1">&#39;spoiler&#39;</span><span class="p">,</span> <span class="no">Jekyll</span><span class="o">::</span><span class="no">Spoiler</span><span class="p">)</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<div id='octopress-spoiler-tag'><input type='checkbox' id='octopress-spoiler-tag-6' class='octopress-spoiler-tag-head' checked/><label for='octopress-spoiler-tag-6'>Для поддержки нескольких спойлеров</label><div id='octopress-spoiler'>
+  Нам необходимо понимать к какому checkbox относится label, это можно сделать с использованием id. Для этого нужно каждому спойлеру присвоить свой уникальный номер. В этом нам помогут переменные класса.
+  <figure class='code'><figcaption><span>spoiler.rb </span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+</pre></td><td class='code'><pre><code class='rb'><span class='line'>    <span class="k">class</span> <span class="nc">Spoiler</span> <span class="o">&lt;</span> <span class="no">Liquid</span><span class="o">::</span><span class="no">Block</span>
+</span><span class='line'>      <span class="vc">@@sasa</span> <span class="o">=</span> <span class="mi">0</span>
+</span><span class='line'>    <span class="o">.</span><span class="n">.</span><span class="o">.</span>
+</span><span class='line'>      <span class="k">def</span> <span class="nf">render</span><span class="p">(</span><span class="n">context</span><span class="p">)</span>
+</span><span class='line'>        <span class="n">quote</span> <span class="o">=</span> <span class="k">super</span>
+</span><span class='line'>        <span class="vc">@@sasa</span> <span class="o">=</span> <span class="vc">@@sasa</span> <span class="o">+</span> <span class="mi">1</span>
+</span><span class='line'>        <span class="s2">&quot;&lt;div id=&#39;octopress-spoiler-tag&#39;&gt;&lt;input type=&#39;checkbox&#39; id=&#39;octopress-spoiler-tag-</span><span class="si">#{</span><span class="vc">@@sasa</span><span class="si">}</span><span class="s2">&#39; class=&#39;octopress-spoiler-tag-head&#39; checked/&gt;&lt;label for=&#39;octopress-spoiler-tag-</span><span class="si">#{</span><span class="vc">@@sasa</span><span class="si">}</span><span class="s2">&#39;&gt;</span><span class="si">#{</span><span class="vi">@text</span><span class="si">}</span><span class="s2">&lt;/label&gt;&lt;div id=&#39;octopress-spoiler&#39;&gt;&quot;</span><span class="o">+</span><span class="n">quote</span><span class="o">+</span><span class="s2">&quot;&lt;/div&gt;&lt;/div&gt;&quot;</span>
+</span><span class='line'>      <span class="k">end</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>
+</span></code></pre></td></tr></table></div></figure>
+  При каждом новом рендере, номер в id будет увеличиваться, что нам и необходимо.
+</div></div>
+
+
+<h2>Литература</h2>
+
+<p><a href="http://everstudent.ru/blog/htmlcss/30-css-seletors-to-memorize/">1</a></p>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Опубликовано <span class="fn">ggoha</span></span>
+
+      
+
+
+
+
+<time class='entry-date' datetime='2016-12-06T18:08:30+03:00'><span class='date'><span class='date-month'>Dec</span> <span class='date-day'>6</span><span class='date-suffix'>th</span>, <span class='date-year'>2016</span></span> <span class='time'>6:08 pm</span></time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/octopress/'>octopress</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <a href="//twitter.com/share" class="twitter-share-button" data-url="http://ggoha.github.io/blog/2016/12/06/pishiem-spoiler-plugin-dlia-octopress/" data-via="" data-counturl="http://ggoha.github.io/blog/2016/12/06/pishiem-spoiler-plugin-dlia-octopress/" >Tweet</a>
+  
+  
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2016/12/05/ssh-s-tieliefona/" title="Previous Post: ssh с телефона">&laquo; ssh с телефона</a>
+      
+      
+    </p>
+  </footer>
+</article>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>Недавние посты</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2016/12/06/pishiem-spoiler-plugin-dlia-octopress/">Пишем Spoiler-plugin для Octopress</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2016/12/05/ssh-s-tieliefona/">Ssh с телефона</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2016/12/04/kratkii-spravochnik-po-ispanskomu-iazyku-na-1-siemiestr/">Краткий справочник по испанскому языку на 1 семестр</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2016/12/03/rieziervnoie-kopirovaniie-v-rails-prilozhienii/">Резервное копирование в Rails приложении</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2016/12/02/udalieniie-oshibok-routingha-iz-rollbar/">Удаление ошибок роутинга из Rollbar</a>
+      </li>
+    
+  </ul>
+</section>
+
+
+
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2016 - ggoha -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+
+
+
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = '//platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>
