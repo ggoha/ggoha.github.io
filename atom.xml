@@ -4,7 +4,7 @@
   <title><![CDATA[Иногда я делаю сайты]]></title>
   <link href="http://ggoha.github.io/atom.xml" rel="self"/>
   <link href="http://ggoha.github.io/"/>
-  <updated>2016-12-04T21:45:56+03:00</updated>
+  <updated>2016-12-06T16:38:14+03:00</updated>
   <id>http://ggoha.github.io/</id>
   <author>
     <name><![CDATA[ggoha]]></name>
@@ -12,6 +12,41 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Ssh с телефона]]></title>
+    <link href="http://ggoha.github.io/blog/2016/12/05/ssh-s-tieliefona/"/>
+    <updated>2016-12-05T23:33:11+03:00</updated>
+    <id>http://ggoha.github.io/blog/2016/12/05/ssh-s-tieliefona</id>
+    <content type="html"><![CDATA[<p>Если что-то выглядит как безумие, используется как безумие да и звучит как безумие, то согласно утиной типизации это безумие. Данная статья рассказывает о подключении телефона к серверу по ssh и еще паре таких вещей.
+В playmarkete достаточно много приложений посвященных подключению с телефона по ssh. Я остановлюсь на <a href="https://termux.com/">Termux</a>. Это не ssh клиент, это полноценный эмулятор терминала и окружения Linux с подтержкой нескольких сессий.</p>
+
+<!-- more -->
+
+
+<p>Для поддержки ssh достатчно сделать</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>apt install ssh</span></code></pre></td></tr></table></div></figure>
+
+
+<p>
+А вот с этого места поподробнее, подумал я. <em>apt install</em> говорите. Больше из любопытства я ввел</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>apt install fish</span></code></pre></td></tr></table></div></figure>
+
+
+<p>
+<img src="http://ggoha.github.io/images/fish.jpg">
+И через пару секунд экран терминала заиграл привычными моему глазу цветами дружелюбного shella. Что меня удивило, можно поставить python, ruby, htop&hellip;
+<img src="http://ggoha.github.io/images/htop.jpg">
+Also есть vi. Но для относительно нормальной работы с консолью и редактором нужны клавиши которых нет на стандартной клавиатуре, для выхода из этой ситуации подходит <a href="https://play.google.com/store/apps/details?id=org.pocketworkstation.pckeyboard&amp;hl=ru">Hacker&rsquo;s keyboard</a>.
+<img src="http://ggoha.github.io/images/hackers_keyboard.jpg">
+В альбомном режиме клавиатура имеет и стрелки, и ctrl, и shift и даже функциональные клавиши. С данным приложением использовать Termux гораздо лучше.
+Таким образом возможно подключиться без компа, а только с телефона, к серверу и выполнить как консольные команды так и правку файлов через vi вполне сносным способом.</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Краткий справочник по испанскому языку на 1 семестр]]></title>
@@ -49,9 +84,69 @@ Mi primo llamo Aleksey.</p>
     <link href="http://ggoha.github.io/blog/2016/12/03/rieziervnoie-kopirovaniie-v-rails-prilozhienii/"/>
     <updated>2016-12-03T19:56:14+03:00</updated>
     <id>http://ggoha.github.io/blog/2016/12/03/rieziervnoie-kopirovaniie-v-rails-prilozhienii</id>
-    <content type="html"><![CDATA[<p>backup dependencies &ndash;install dropbox-sdk</p>
+    <content type="html"><![CDATA[<p>Никогда не поздно начать делать бекапы, подумал я, и решил автоматизировать данный процесс в своем приложении. После похода на <a href="">The Ruby Toolbox</a> я остановился на геме <a href="https://github.com/backup/backup">backup</a></p>
 
-<p>в частности выяснилось invalid byte sequence for encoding &ldquo;UTF8&rdquo;: 0x8b</p>
+<h2>Установка</h2>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>gem install backup</span></code></pre></td></tr></table></div></figure>
+
+
+<p><strong>Важно</strong> не пытаться повторять мои ошибки и не ставить гем через bundler, иначе на второй запуск вы рискуете получить
+NameError: uninitialized constant Module::Rails</p>
+
+<h2>Настройка</h2>
+
+<p>Создаем модель, которая и будет осуществлять создание наших резервных копий, следующей командой</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>backup generate:model  --config-file='config/backup/config.rb' --trigger my_backup \
+</span><span class='line'>    --databases="postgresql" --storages="dropbox" \
+</span><span class='line'>    --encryptor="openssl" --compressor="gzip" --notifiers="mail"</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Здесь мы создаем конфиг, расположенный по адресу <strong>config/backup/config.rb</strong> и модель к нему по адресу config/backup/models/my_backup.rb.
+Модель будет настроена для работы с PostgreSQL базой данных, сжатием, шифрованием openssl, хранением на Dropbox и уведомлением по почте.
+Dropbox используется так как проект не очень большой и 2Гб Dropbox хватает с лихвой.
+Сама модель очень подробно откоментирована, поэтому я остановлюсь лишь на некоторых моментах.
+Для работы с Dropbox нужно будет кроме регистрации создать еще и приложение <a href="https://www.dropbox.com/developers/apps">здесь</a>. В качестве разрешений достаточно работы с папкой. А при первом создании резервной копии нужно будет вручную перейти по ссылке в консоли для подтверждения прав доступа.
+Так же возножно понадобится установить дополнительные модули. Например, модуль работы с Dropbox</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>backup dependencies --install dropbox-sdk</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Для сохранения не только базы, но и например пользовательских картинок нужно вставит</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>archive :my_archive do |archive|
+</span><span class='line'>    archive.add 'path/to/users/pictures'
+</span><span class='line'>  end</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Собственно запуск процесса резервного копирования</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>backup perform --trigger my_backup --config-file /config/backup/config.rb</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Расшифровка зашифрованного содержимого</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>openssl aes-256-cbc -d -base64 -in my_backup.tar.enc  -out my_backup.tar</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Осталось только положить такую задачу в cron например на 2 часа ночи ежедневно</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>2 2 * * * root cd /home/deploy/apps/olimpaid/shared && /home/deploy/.rbenv/shims/backup perform --trigger my_backup --config-file /home/deploy/apps/olimpaid/current/config/backup/config.rb</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Лучше прописывать абсолютные пути(путь до backup можно посмотреть через whereis), cd нужно для корректной работы добавления в архив папки с нашими картинками.</p>
 ]]></content>
   </entry>
   

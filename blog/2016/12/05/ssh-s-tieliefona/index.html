@@ -1,0 +1,229 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Ssh с телефона - Иногда я делаю сайты</title>
+  <meta name="author" content="ggoha">
+
+  
+  <meta name="description" content="Если что-то выглядит как безумие, используется как безумие да и звучит как безумие, то согласно утиной типизации это безумие. Данная статья &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://ggoha.github.io/blog/2016/12/05/ssh-s-tieliefona/">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/atom.xml" rel="alternate" title="Иногда я делаю сайты" type="application/atom+xml">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  <script>!window.jQuery && document.write(unescape('%3Cscript src="/javascripts/libs/jquery.min.js"%3E%3C/script%3E'))</script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="//fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="//fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+  
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">Иногда я делаю сайты</a></h1>
+  
+    <h2>Что-то вроде персонального блога.</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="https://www.google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="sitesearch" value="ggoha.github.io">
+    <input class="search" type="text" name="q" results="0" placeholder="Поиск"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Блог</a></li>
+  <li><a href="/blog/archives">Архив</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">Ssh с телефона</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+<time class='entry-date' datetime='2016-12-05T23:33:11+03:00'><span class='date'><span class='date-month'>Dec</span> <span class='date-day'>5</span><span class='date-suffix'>th</span>, <span class='date-year'>2016</span></span> <span class='time'>11:33 pm</span></time>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>Если что-то выглядит как безумие, используется как безумие да и звучит как безумие, то согласно утиной типизации это безумие. Данная статья рассказывает о подключении телефона к серверу по ssh и еще паре таких вещей.
+В playmarkete достаточно много приложений посвященных подключению с телефона по ssh. Я остановлюсь на <a href="https://termux.com/">Termux</a>. Это не ssh клиент, это полноценный эмулятор терминала и окружения Linux с подтержкой нескольких сессий.</p>
+
+<!-- more -->
+
+
+<p>Для поддержки ssh достатчно сделать</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>apt install ssh</span></code></pre></td></tr></table></div></figure>
+
+
+<p>
+А вот с этого места поподробнее, подумал я. <em>apt install</em> говорите. Больше из любопытства я ввел</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>apt install fish</span></code></pre></td></tr></table></div></figure>
+
+
+<p>
+<img src="/images/fish.jpg">
+И через пару секунд экран терминала заиграл привычными моему глазу цветами дружелюбного shella. Что меня удивило, можно поставить python, ruby, htop&hellip;
+<img src="/images/htop.jpg">
+Also есть vi. Но для относительно нормальной работы с консолью и редактором нужны клавиши которых нет на стандартной клавиатуре, для выхода из этой ситуации подходит <a href="https://play.google.com/store/apps/details?id=org.pocketworkstation.pckeyboard&amp;hl=ru">Hacker&rsquo;s keyboard</a>.
+<img src="/images/hackers_keyboard.jpg">
+В альбомном режиме клавиатура имеет и стрелки, и ctrl, и shift и даже функциональные клавиши. С данным приложением использовать Termux гораздо лучше.
+Таким образом возможно подключиться без компа, а только с телефона, к серверу и выполнить как консольные команды так и правку файлов через vi вполне сносным способом.</p>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Опубликовано <span class="fn">ggoha</span></span>
+
+      
+
+
+
+
+<time class='entry-date' datetime='2016-12-05T23:33:11+03:00'><span class='date'><span class='date-month'>Dec</span> <span class='date-day'>5</span><span class='date-suffix'>th</span>, <span class='date-year'>2016</span></span> <span class='time'>11:33 pm</span></time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/biezumiie/'>Безумие</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <a href="//twitter.com/share" class="twitter-share-button" data-url="http://ggoha.github.io/blog/2016/12/05/ssh-s-tieliefona/" data-via="" data-counturl="http://ggoha.github.io/blog/2016/12/05/ssh-s-tieliefona/" >Tweet</a>
+  
+  
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2016/12/04/kratkii-spravochnik-po-ispanskomu-iazyku-na-1-siemiestr/" title="Previous Post: Краткий справочник по испанскому языку на 1 семестр">&laquo; Краткий справочник по испанскому языку на 1 семестр</a>
+      
+      
+    </p>
+  </footer>
+</article>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>Недавние посты</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2016/12/05/ssh-s-tieliefona/">Ssh с телефона</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2016/12/04/kratkii-spravochnik-po-ispanskomu-iazyku-na-1-siemiestr/">Краткий справочник по испанскому языку на 1 семестр</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2016/12/03/rieziervnoie-kopirovaniie-v-rails-prilozhienii/">Резервное копирование в Rails приложении</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2016/12/02/udalieniie-oshibok-routingha-iz-rollbar/">Удаление ошибок роутинга из Rollbar</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2016/12/01/post-pro-etot-post/">Пост про этот пост</a>
+      </li>
+    
+  </ul>
+</section>
+
+
+
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2016 - ggoha -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+
+
+
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = '//platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>

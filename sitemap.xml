@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd" xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 <url>
+<loc>http://ggoha.github.io/blog/2016/12/05/ssh-s-tieliefona/</loc>
+<lastmod>2016-12-05T23:33:11+03:00</lastmod>
+</url>
+<url>
 <loc>http://ggoha.github.io/blog/2016/12/04/kratkii-spravochnik-po-ispanskomu-iazyku-na-1-siemiestr/</loc>
 <lastmod>2016-12-04T17:44:02+03:00</lastmod>
 </url>
@@ -32,6 +36,12 @@
 <loc>http://ggoha.github.io/blog/categories/rollbar/</loc>
 </url>
 <url>
+<loc>http://ggoha.github.io/blog/categories/backup/</loc>
+</url>
+<url>
 <loc>http://ggoha.github.io/blog/categories/espanol/</loc>
+</url>
+<url>
+<loc>http://ggoha.github.io/blog/categories/biezumiie/</loc>
 </url>
 </urlset>

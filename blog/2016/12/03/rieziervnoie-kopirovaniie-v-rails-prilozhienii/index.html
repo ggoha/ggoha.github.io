@@ -9,8 +9,7 @@
   <meta name="author" content="ggoha">
 
   
-  <meta name="description" content="backup dependencies &ndash;install dropbox-sdk в частности выяснилось invalid byte sequence for encoding &ldquo;UTF8&rdquo;: 0x8b
-">
+  <meta name="description" content="Никогда не поздно начать делать бекапы, подумал я, и решил автоматизировать данный процесс в своем приложении. После похода на The Ruby Toolbox я &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -85,9 +84,69 @@
   </header>
 
 
-<div class="entry-content"><p>backup dependencies &ndash;install dropbox-sdk</p>
+<div class="entry-content"><p>Никогда не поздно начать делать бекапы, подумал я, и решил автоматизировать данный процесс в своем приложении. После похода на <a href="">The Ruby Toolbox</a> я остановился на геме <a href="https://github.com/backup/backup">backup</a></p>
 
-<p>в частности выяснилось invalid byte sequence for encoding &ldquo;UTF8&rdquo;: 0x8b</p>
+<h2>Установка</h2>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>gem install backup</span></code></pre></td></tr></table></div></figure>
+
+
+<p><strong>Важно</strong> не пытаться повторять мои ошибки и не ставить гем через bundler, иначе на второй запуск вы рискуете получить
+NameError: uninitialized constant Module::Rails</p>
+
+<h2>Настройка</h2>
+
+<p>Создаем модель, которая и будет осуществлять создание наших резервных копий, следующей командой</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>backup generate:model  --config-file='config/backup/config.rb' --trigger my_backup \
+</span><span class='line'>    --databases="postgresql" --storages="dropbox" \
+</span><span class='line'>    --encryptor="openssl" --compressor="gzip" --notifiers="mail"</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Здесь мы создаем конфиг, расположенный по адресу <strong>config/backup/config.rb</strong> и модель к нему по адресу config/backup/models/my_backup.rb.
+Модель будет настроена для работы с PostgreSQL базой данных, сжатием, шифрованием openssl, хранением на Dropbox и уведомлением по почте.
+Dropbox используется так как проект не очень большой и 2Гб Dropbox хватает с лихвой.
+Сама модель очень подробно откоментирована, поэтому я остановлюсь лишь на некоторых моментах.
+Для работы с Dropbox нужно будет кроме регистрации создать еще и приложение <a href="https://www.dropbox.com/developers/apps">здесь</a>. В качестве разрешений достаточно работы с папкой. А при первом создании резервной копии нужно будет вручную перейти по ссылке в консоли для подтверждения прав доступа.
+Так же возножно понадобится установить дополнительные модули. Например, модуль работы с Dropbox</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>backup dependencies --install dropbox-sdk</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Для сохранения не только базы, но и например пользовательских картинок нужно вставит</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>archive :my_archive do |archive|
+</span><span class='line'>    archive.add 'path/to/users/pictures'
+</span><span class='line'>  end</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Собственно запуск процесса резервного копирования</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>backup perform --trigger my_backup --config-file /config/backup/config.rb</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Расшифровка зашифрованного содержимого</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>openssl aes-256-cbc -d -base64 -in my_backup.tar.enc  -out my_backup.tar</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Осталось только положить такую задачу в cron например на 2 часа ночи ежедневно</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>2 2 * * * root cd /home/deploy/apps/olimpaid/shared && /home/deploy/.rbenv/shims/backup perform --trigger my_backup --config-file /home/deploy/apps/olimpaid/current/config/backup/config.rb</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Лучше прописывать абсолютные пути(путь до backup можно посмотреть через whereis), cd нужно для корректной работы добавления в архив папки с нашими картинками.</p>
 </div>
 
 
@@ -105,6 +164,12 @@
 
 <time class='entry-date' datetime='2016-12-03T19:56:14+03:00'><span class='date'><span class='date-month'>Dec</span> <span class='date-day'>3</span><span class='date-suffix'>rd</span>, <span class='date-year'>2016</span></span> <span class='time'>7:56 pm</span></time>
       
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/backup/'>backup</a>
+  
+</span>
 
 
     </p>
@@ -136,6 +201,10 @@
     <section>
   <h1>Недавние посты</h1>
   <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2016/12/05/ssh-s-tieliefona/">Ssh с телефона</a>
+      </li>
     
       <li class="post">
         <a href="/blog/2016/12/04/kratkii-spravochnik-po-ispanskomu-iazyku-na-1-siemiestr/">Краткий справочник по испанскому языку на 1 семестр</a>

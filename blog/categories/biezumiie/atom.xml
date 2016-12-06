@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Тег: Безумие | Иногда я делаю сайты]]></title>
+  <link href="http://ggoha.github.io/blog/categories/biezumiie/atom.xml" rel="self"/>
+  <link href="http://ggoha.github.io/"/>
+  <updated>2016-12-06T16:38:14+03:00</updated>
+  <id>http://ggoha.github.io/</id>
+  <author>
+    <name><![CDATA[ggoha]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Ssh с телефона]]></title>
+    <link href="http://ggoha.github.io/blog/2016/12/05/ssh-s-tieliefona/"/>
+    <updated>2016-12-05T23:33:11+03:00</updated>
+    <id>http://ggoha.github.io/blog/2016/12/05/ssh-s-tieliefona</id>
+    <content type="html"><![CDATA[<p>Если что-то выглядит как безумие, используется как безумие да и звучит как безумие, то согласно утиной типизации это безумие. Данная статья рассказывает о подключении телефона к серверу по ssh и еще паре таких вещей.
+В playmarkete достаточно много приложений посвященных подключению с телефона по ssh. Я остановлюсь на <a href="https://termux.com/">Termux</a>. Это не ssh клиент, это полноценный эмулятор терминала и окружения Linux с подтержкой нескольких сессий.</p>
+
+<!-- more -->
+
+
+<p>Для поддержки ssh достатчно сделать
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>apt install ssh</span></code></pre></td></tr></table></div></figure>
+А вот с этого места поподробнее, подумал я. <em>apt install</em> говорите. Больше из любопытства я ввел
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>apt install fish</span></code></pre></td></tr></table></div></figure>
+<img src="/images/fish.jpg">
+И через пару секунд экран терминала заиграл привычными моему глазу цветами дружелюбного shella. Что меня удивило, можно поставить python, ruby, htop&hellip;
+<img src="/images/htop.jpg">
+Also есть vi. Но для относительно нормальной работы с консолью и редактором нужны клавиши которых нет на стандартной клавиатуре, для выхода из этой ситуации подходит <a href="https://play.google.com/store/apps/details?id=org.pocketworkstation.pckeyboard&amp;hl=ru">Hacker&rsquo;s keyboard</a>.
+<img src="/images/hackers_keyboard.jpg">
+В альбомном режиме клавиатура имеет и стрелки, и ctrl, и shift и даже функциональные клавиши. С данным приложением использовать Termux гораздо лучше.
+Таким образом возможно подключиться без компа, а только с телефона, к серверу и выполнить как консольные команды так и правку файлов через vi вполне сносным способом.</p>
+]]></content>
+  </entry>
+  
+</feed>

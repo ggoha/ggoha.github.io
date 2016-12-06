@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Тег: Backup | Иногда я делаю сайты]]></title>
+  <link href="http://ggoha.github.io/blog/categories/backup/atom.xml" rel="self"/>
+  <link href="http://ggoha.github.io/"/>
+  <updated>2016-12-06T16:38:14+03:00</updated>
+  <id>http://ggoha.github.io/</id>
+  <author>
+    <name><![CDATA[ggoha]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Резервное копирование в Rails приложении]]></title>
+    <link href="http://ggoha.github.io/blog/2016/12/03/rieziervnoie-kopirovaniie-v-rails-prilozhienii/"/>
+    <updated>2016-12-03T19:56:14+03:00</updated>
+    <id>http://ggoha.github.io/blog/2016/12/03/rieziervnoie-kopirovaniie-v-rails-prilozhienii</id>
+    <content type="html"><![CDATA[<p>Никогда не поздно начать делать бекапы, подумал я, и решил автоматизировать данный процесс в своем приложении. После похода на <a href="">The Ruby Toolbox</a> я остановился на геме <a href="https://github.com/backup/backup">backup</a></p>
+
+<h2>Установка</h2>
+
+<p><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>gem install backup</span></code></pre></td></tr></table></div></figure>
+<strong>Важно</strong> не пытаться повторять мои ошибки и не ставить гем через bundler, иначе на второй запуск вы рискуете получить
+NameError: uninitialized constant Module::Rails</p>
+
+<h2>Настройка</h2>
+
+<p>Создаем модель, которая и будет осуществлять создание наших резервных копий, следующей командой
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>backup generate:model  &ndash;config-file=&lsquo;config/backup/config.rb&rsquo; &ndash;trigger my_backup \
+</span><span class='line'>    &ndash;databases=&ldquo;postgresql&rdquo; &ndash;storages=&ldquo;dropbox&rdquo; \
+</span><span class='line'>    &ndash;encryptor=&ldquo;openssl&rdquo; &ndash;compressor=&ldquo;gzip&rdquo; &ndash;notifiers=&ldquo;mail&rdquo;</span></code></pre></td></tr></table></div></figure>
+Здесь мы создаем конфиг, расположенный по адресу <strong>config/backup/config.rb</strong> и модель к нему по адресу config/backup/models/my_backup.rb.
+Модель будет настроена для работы с PostgreSQL базой данных, сжатием, шифрованием openssl, хранением на Dropbox и уведомлением по почте.
+Dropbox используется так как проект не очень большой и 2Гб Dropbox хватает с лихвой.
+Сама модель очень подробно откоментирована, поэтому я остановлюсь лишь на некоторых моментах.
+Для работы с Dropbox нужно будет кроме регистрации создать еще и приложение <a href="https://www.dropbox.com/developers/apps">здесь</a>. В качестве разрешений достаточно работы с папкой. А при первом создании резервной копии нужно будет вручную перейти по ссылке в консоли для подтверждения прав доступа.
+Так же возножно понадобится установить дополнительные модули. Например, модуль работы с Dropbox
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>backup dependencies &ndash;install dropbox-sdk</span></code></pre></td></tr></table></div></figure>
+Для сохранения не только базы, но и например пользовательских картинок нужно вставит
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>archive :my_archive do |archive|
+</span><span class='line'>    archive.add &lsquo;path/to/users/pictures&rsquo;
+</span><span class='line'>  end</span></code></pre></td></tr></table></div></figure>
+Собственно запуск процесса резервного копирования
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>backup perform &ndash;trigger my_backup &ndash;config-file /config/backup/config.rb</span></code></pre></td></tr></table></div></figure>
+Расшифровка зашифрованного содержимого
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>openssl aes-256-cbc -d -base64 -in my_backup.tar.enc  -out my_backup.tar</span></code></pre></td></tr></table></div></figure>
+Осталось только положить такую задачу в cron например на 2 часа ночи ежедневно
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>2 2 * * * root cd /home/deploy/apps/olimpaid/shared &amp;&amp; /home/deploy/.rbenv/shims/backup perform &ndash;trigger my_backup &ndash;config-file /home/deploy/apps/olimpaid/current/config/backup/config.rb</span></code></pre></td></tr></table></div></figure>
+Лучше прописывать абсолютные пути(путь до backup можно посмотреть через whereis), cd нужно для корректной работы добавления в архив папки с нашими картинками.</p>
+]]></content>
+  </entry>
+  
+</feed>
