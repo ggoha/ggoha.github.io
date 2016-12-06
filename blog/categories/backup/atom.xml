@@ -4,7 +4,7 @@
   <title><![CDATA[Тег: Backup | Иногда я делаю сайты]]></title>
   <link href="http://ggoha.github.io/blog/categories/backup/atom.xml" rel="self"/>
   <link href="http://ggoha.github.io/"/>
-  <updated>2016-12-06T16:38:14+03:00</updated>
+  <updated>2016-12-06T16:51:33+03:00</updated>
   <id>http://ggoha.github.io/</id>
   <author>
     <name><![CDATA[ggoha]]></name>
@@ -19,6 +19,9 @@
     <updated>2016-12-03T19:56:14+03:00</updated>
     <id>http://ggoha.github.io/blog/2016/12/03/rieziervnoie-kopirovaniie-v-rails-prilozhienii</id>
     <content type="html"><![CDATA[<p>Никогда не поздно начать делать бекапы, подумал я, и решил автоматизировать данный процесс в своем приложении. После похода на <a href="">The Ruby Toolbox</a> я остановился на геме <a href="https://github.com/backup/backup">backup</a></p>
+
+<!-- more -->
+
 
 <h2>Установка</h2>
 
