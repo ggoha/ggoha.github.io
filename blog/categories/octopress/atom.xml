@@ -4,7 +4,7 @@
   <title><![CDATA[Тег: Octopress | Иногда я делаю сайты]]></title>
   <link href="http://ggoha.github.io/blog/categories/octopress/atom.xml" rel="self"/>
   <link href="http://ggoha.github.io/"/>
-  <updated>2016-12-06T21:08:34+03:00</updated>
+  <updated>2016-12-07T22:40:06+03:00</updated>
   <id>http://ggoha.github.io/</id>
   <author>
     <name><![CDATA[ggoha]]></name>
@@ -19,8 +19,9 @@
     <updated>2016-12-06T18:08:30+03:00</updated>
     <id>http://ggoha.github.io/blog/2016/12/06/pishiem-spoiler-plugin-dlia-octopress</id>
     <content type="html"><![CDATA[<p>Мне изначально хотелось скрывать некоторые части постов под спойлер, например вот так
-<img src="/images/spoiler.png">
-Я смог найти только вот <a href="https://github.com/seanhagen/octopress-spoiler-tag/blob/master/spoiler.rb">это</a>
+<img src="/images/spoiler.png"></p>
+
+<p>Я смог найти только вот <a href="https://github.com/seanhagen/octopress-spoiler-tag/blob/master/spoiler.rb">это</a>
 Но меня это не устраивало, так как это был однострочный спойлер, например, для &ldquo;спойлеров&rdquo; в фильме. Я же хотел скрывать некоторую часть текста, например, описание исправлений ошибок, которые в большинстве случаев не имеет смысла показывать.
 Поэтому я решил написать его сам. Кроме того, я решил не использовать js, а обойтись только HTML/CSS.</p>
 
@@ -34,27 +35,27 @@
 
 <p>Основная идея следующая
 Переключатель представляет собой checkbox, для нажатого check с помощью селектора + (выбирающего следующие элементы) мы устанавливаем display:none для спойлерных объектов.
-<div id='octopress-spoiler-tag'><input type='checkbox' id='octopress-spoiler-tag-7' class='octopress-spoiler-tag-head' checked/><label for='octopress-spoiler-tag-7'>Пояснение#1</label><div id='octopress-spoiler'>
+<p><div class='octopress-spoiler-block'><input type='checkbox' id='octopress-spoiler-block-7'       class='octopress-spoiler-block-head' checked/><label for='octopress-spoiler-block-7'>Пояснение#1         </label><div class='octopress-spoiler'>
   <figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>.octopress-spoiler-tag + label {
+</pre></td><td class='code'><pre><code class=''><span class='line'>.octopress-spoiler-block + label {
 </span><span class='line'>      cursor: pointer;
 </span><span class='line'>    }</span></code></pre></td></tr></table></div></figure>
   Позволяет изменять значение checkbox-a при нажатии на связанную с ним по id надпись.
-</div></div></p>
+</div></div></p></p>
 
-<p><div id='octopress-spoiler-tag'><input type='checkbox' id='octopress-spoiler-tag-8' class='octopress-spoiler-tag-head' checked/><label for='octopress-spoiler-tag-8'>Пояснение#2</label><div id='octopress-spoiler'>
+<p><p><div class='octopress-spoiler-block'><input type='checkbox' id='octopress-spoiler-block-8'       class='octopress-spoiler-block-head' checked/><label for='octopress-spoiler-block-8'>Пояснение#2         </label><div class='octopress-spoiler'>
   <figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
 <span class='line-number'>4</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>.octopress-spoiler-tag:not(checked) {
+</pre></td><td class='code'><pre><code class=''><span class='line'>.octopress-spoiler-block:not(checked) {
 </span><span class='line'>      position: absolute;
 </span><span class='line'>      opacity: 0;
 </span><span class='line'>    }</span></code></pre></td></tr></table></div></figure>
   Убирает с глаз долой дефолтный checkbox.
-</div></div></p>
+</div></div></p></p>
 
 <h2>Ruby</h2>
 
@@ -83,10 +84,12 @@
 <span class='line-number'>21</span>
 <span class='line-number'>22</span>
 <span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
 </pre></td><td class='code'><pre><code class='rb'><span class='line'><span class="k">module</span> <span class="nn">Jekyll</span>
 </span><span class='line'>  <span class="k">class</span> <span class="nc">Spoiler</span> <span class="o">&amp;</span><span class="n">lt</span><span class="p">;</span> <span class="no">Liquid</span><span class="o">::</span><span class="no">Block</span>
-</span><span class='line'>  <span class="c1">#Зависит от того, хотим ли мы блок (многострочный как blockquote) или тег (однострочный как image)</span>
-</span><span class='line'>    <span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="n">tag_name</span><span class="p">,</span> <span class="n">text</span><span class="p">,</span> <span class="n">tokens</span><span class="p">)</span>
+</span><span class='line'>  <span class="c1">#Зависит от того блок (многострочный как blockquote) это или тег (однострочный как image)</span>
+</span><span class='line'>    <span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="n">block_name</span><span class="p">,</span> <span class="n">text</span><span class="p">,</span> <span class="n">tokens</span><span class="p">)</span>
 </span><span class='line'>    <span class="c1">#собственно инициализация</span>
 </span><span class='line'>      <span class="c1">#здесь нам делать особо нечего</span>
 </span><span class='line'>      <span class="c1">#но возможно есть что инициализировать классу, что выше в цепочке наследования</span>
@@ -99,7 +102,9 @@
 </span><span class='line'><span class="sr">  #получаем результат render-a предка</span>
 </span><span class='line'><span class="sr">  quote = super </span>
 </span><span class='line'><span class="sr">  #оборачиваем в div, добавлем checkbox и label</span>
-</span><span class='line'><span class="sr">  &quot;&amp;lt;div id=&#39;octopress-spoiler-tag&#39;&amp;gt;&amp;lt;input type=&#39;checkbox&#39; id=&#39;octopress-spoiler-tag&#39; class=&#39;octopress-spoiler-tag-head&#39; checked/</span><span class="o">&amp;</span><span class="n">gt</span><span class="p">;</span><span class="o">&amp;</span><span class="n">lt</span><span class="p">;</span><span class="n">label</span> <span class="k">for</span><span class="o">=</span><span class="s1">&#39;octopress-spoiler-tag&#39;</span><span class="o">&amp;</span><span class="n">gt</span><span class="p">;</span><span class="c1">#{@text}&amp;lt;/label&amp;gt;&amp;lt;div id=&#39;octopress-spoiler&#39;&amp;gt;&quot;+quote+&quot;&amp;lt;/div&amp;gt;&amp;lt;/div&amp;gt;&quot;</span>
+</span><span class='line'><span class="sr">  &quot;&amp;lt;div id=&#39;octopress-spoiler-block&#39;&amp;gt;&amp;lt;input type=&#39;checkbox&#39; id=&#39;octopress-spoiler-block&#39; \</span>
+</span><span class='line'><span class="sr">  class=&#39;octopress-spoiler-block-head&#39; checked/</span><span class="o">&amp;</span><span class="n">gt</span><span class="p">;</span><span class="o">&amp;</span><span class="n">lt</span><span class="p">;</span><span class="n">label</span> <span class="k">for</span><span class="o">=</span><span class="s1">&#39;octopress-spoiler-block&#39;</span><span class="o">&amp;</span><span class="n">gt</span><span class="p">;</span> <span class="p">\</span>
+</span><span class='line'>  <span class="c1">#{@text} &amp;lt;/label&amp;gt;&amp;lt;div id=&#39;octopress-spoiler&#39;&amp;gt;&quot;+quote+&quot;&amp;lt;/div&amp;gt;&amp;lt;/div&amp;gt;&quot;</span>
 </span><span class='line'><span class="k">end</span>
 </span><span class='line'><span class="o">&lt;</span><span class="sr">/code&gt;&lt;/</span><span class="n">pre</span><span class="o">&gt;</span>
 </span><span class='line'>
@@ -107,7 +112,7 @@
 </span><span class='line'><span class="k">end</span>
 </span><span class='line'><span class="no">Liquid</span><span class="o">::</span><span class="no">Template</span><span class="o">.</span><span class="n">register_tag</span><span class="p">(</span><span class="o">&amp;</span><span class="n">lsquo</span><span class="p">;</span><span class="n">spoiler</span><span class="o">&amp;</span><span class="n">rsquo</span><span class="p">;,</span> <span class="no">Jekyll</span><span class="o">::</span><span class="no">Spoiler</span><span class="p">)</span>
 </span></code></pre></td></tr></table></div></figure>
-<div id='octopress-spoiler-tag'><input type='checkbox' id='octopress-spoiler-tag-9' class='octopress-spoiler-tag-head' checked/><label for='octopress-spoiler-tag-9'>Для поддержки нескольких спойлеров</label><div id='octopress-spoiler'>
+<p><div class='octopress-spoiler-block'><input type='checkbox' id='octopress-spoiler-block-9'       class='octopress-spoiler-block-head' checked/><label for='octopress-spoiler-block-9'>Для поддержки нескольких спойлеров         </label><div class='octopress-spoiler'>
   Нам необходимо понимать к какому checkbox относится label, это можно сделать с использованием id. Для этого нужно каждому спойлеру присвоить свой уникальный номер. В этом нам помогут переменные класса.
   <figure class='code'><figcaption><span>spoiler.rb </span></figcaption>
 <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
@@ -120,23 +125,32 @@
 <span class='line-number'>8</span>
 <span class='line-number'>9</span>
 <span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
 </pre></td><td class='code'><pre><code class='rb'><span class='line'>    <span class="k">class</span> <span class="nc">Spoiler</span> <span class="o">&amp;</span><span class="n">lt</span><span class="p">;</span> <span class="no">Liquid</span><span class="o">::</span><span class="no">Block</span>
 </span><span class='line'>      <span class="vc">@@sasa</span> <span class="o">=</span> <span class="mi">0</span>
 </span><span class='line'>    <span class="o">&amp;</span><span class="n">hellip</span><span class="p">;</span>
 </span><span class='line'>      <span class="k">def</span> <span class="nf">render</span><span class="p">(</span><span class="n">context</span><span class="p">)</span>
 </span><span class='line'>        <span class="n">quote</span> <span class="o">=</span> <span class="k">super</span>
 </span><span class='line'>        <span class="vc">@@sasa</span> <span class="o">=</span> <span class="vc">@@sasa</span> <span class="o">+</span> <span class="mi">1</span>
-</span><span class='line'>        <span class="o">&amp;</span><span class="n">ldquo</span><span class="p">;</span><span class="o">&lt;</span><span class="n">div</span> <span class="nb">id</span><span class="o">=</span><span class="s1">&#39;octopress-spoiler-tag&#39;</span><span class="o">&gt;&lt;</span><span class="n">input</span> <span class="n">type</span><span class="o">=</span><span class="s1">&#39;checkbox&#39;</span> <span class="nb">id</span><span class="o">=</span><span class="s1">&#39;octopress-spoiler-tag-#{@@sasa}&#39;</span> <span class="n">class</span><span class="o">=</span><span class="s1">&#39;octopress-spoiler-tag-head&#39;</span> <span class="n">checked</span><span class="o">/&gt;&lt;</span><span class="n">label</span> <span class="k">for</span><span class="o">=</span><span class="s1">&#39;octopress-spoiler-tag-#{@@sasa}&#39;</span><span class="o">&gt;</span><span class="c1">#{@text}&lt;/label&gt;&lt;div id=&#39;octopress-spoiler&#39;&gt;&amp;rdquo;+quote+&amp;ldquo;&lt;/div&gt;&lt;/div&gt;&amp;rdquo;</span>
+</span><span class='line'>        <span class="o">&amp;</span><span class="n">ldquo</span><span class="p">;</span><span class="o">&lt;</span><span class="nb">p</span><span class="o">&gt;&lt;</span><span class="n">div</span> <span class="n">class</span><span class="o">=</span><span class="s1">&#39;octopress-spoiler-block&#39;</span><span class="o">&gt;&lt;</span><span class="n">input</span> <span class="n">type</span><span class="o">=</span><span class="s1">&#39;checkbox&#39;</span> <span class="p">\</span>
+</span><span class='line'>        <span class="nb">id</span><span class="o">=</span><span class="s1">&#39;octopress-spoiler-block-#{@@sasa}&#39;</span> <span class="n">class</span><span class="o">=</span><span class="s1">&#39;octopress-spoiler-block-head&#39;</span> <span class="p">\</span>
+</span><span class='line'>        <span class="n">checked</span><span class="o">/&gt;&lt;</span><span class="n">label</span> <span class="k">for</span><span class="o">=</span><span class="s1">&#39;octopress-spoiler-block-#{@@sasa}&#39;</span><span class="o">&gt;</span><span class="c1">#{@text} \</span>
+</span><span class='line'>        <span class="o">&lt;</span><span class="sr">/label&gt;&lt;div class=&#39;octopress-spoiler&#39;&gt;&amp;rdquo;+quote+&amp;ldquo;&lt;/</span><span class="n">div</span><span class="o">&gt;&lt;</span><span class="sr">/div&gt;&lt;/</span><span class="nb">p</span><span class="o">&gt;&amp;</span><span class="n">rdquo</span><span class="p">;</span>
 </span><span class='line'>      <span class="k">end</span>
 </span><span class='line'>    <span class="p">}</span>
 </span><span class='line'>
 </span></code></pre></td></tr></table></div></figure>
   При каждом новом рендере, номер в id будет увеличиваться, что нам и необходимо.
-</div></div></p>
+</div></div></p></p>
+
+<p>К сожалению, сразу формить все это в виде гема не удалось, возможно это материал для одной из следующих заметок</p>
 
 <h2>Литература</h2>
 
-<p><a href="http://everstudent.ru/blog/htmlcss/30-css-seletors-to-memorize/">1</a></p>
+<p>При подготовке я много интересного для себя подчерпнул из <a href="http://everstudent.ru/blog/htmlcss/30-css-seletors-to-memorize/">1</a>
+и <a href="http://everstudent.ru/blog/htmlcss/30-css-seletors-to-memorize/">2</a></p>
 ]]></content>
   </entry>
   

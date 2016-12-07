@@ -4,7 +4,7 @@
   <title><![CDATA[Иногда я делаю сайты]]></title>
   <link href="http://ggoha.github.io/atom.xml" rel="self"/>
   <link href="http://ggoha.github.io/"/>
-  <updated>2016-12-06T21:08:34+03:00</updated>
+  <updated>2016-12-07T22:40:06+03:00</updated>
   <id>http://ggoha.github.io/</id>
   <author>
     <name><![CDATA[ggoha]]></name>
@@ -14,13 +14,182 @@
 
   
   <entry>
+    <title type="html"><![CDATA[Страница принятия пользовательского соглашения]]></title>
+    <link href="http://ggoha.github.io/blog/2016/12/07/stranitsa-priniatiia-pol'zovatiel'skogho-soghlashieniia/"/>
+    <updated>2016-12-07T20:51:16+03:00</updated>
+    <id>http://ggoha.github.io/blog/2016/12/07/stranitsa-priniatiia-pol'zovatiel'skogho-soghlashieniia</id>
+    <content type="html"><![CDATA[<p>Схематично страница с принятием пользовательского соглашения выглядит так
+<img src="http://ggoha.github.io/images/maket1.png">
+Нечто такое и мы будем реализовывать</p>
+
+<!-- more -->
+
+
+<h2>Текст договора</h2>
+
+<p>Вручную оформлять этот многостраничный договор с пунктами и подпунктами в html на странице долго и некрасиво. Будем выгружать его из файла.</p>
+
+<figure class='code'><figcaption><span>slim </span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>= File.read "DOGOVOR.txt"</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Списки и подсписки перенеслись нормально, а вот с переносы строк html не воспринимает. Это сожно исправить с помощью хелпера simple format, он переводит <strong>\n</strong> в <strong>&lt;br></strong>. Кроме того нужно показать, что этот текст уже содержит html-теги с помощью html_safe.</p>
+
+<figure class='code'><figcaption><span>slim </span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>= simple_format(File.read "DOGOVOR.txt").html_safe</span></code></pre></td></tr></table></div></figure>
+
+
+<h2>Согласие с договором</h2>
+
+<p>Мы хотим чтобы без нажатого принятия договора не происходил переход к следующей странице. С появлением html5 это стало сделать гораздо легче. Для этого нам понадобится атрибут required примененный к checkbox.</p>
+
+<figure class='code'><figcaption><span>slim </span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>= form_tag() do
+</span><span class='line'>  input id="field_terms" type="checkbox" required=true
+</span><span class='line'>  = submit_tag("Заплатить")</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Для русификации ошибки</p>
+
+<figure class='code'><figcaption><span>javascript </span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>document.getElementById("field_terms").setCustomValidity("Для продолжения оплаты, Вы должны принять правила пользования");</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Что бы использовать вместо стандартного checkbox свою картинку, придется скрыть defoult, а изображение показывать вместо связанного labela. Связь по id checkbox позволяет изменять значение при клике на соответствующий label.</p>
+
+<figure class='code'><figcaption><span>form.html.slim </span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='slim'><span class='line'>      <span class="nt">input</span><span class="na">  id</span><span class="p">=</span><span class="s2">&quot;field_terms&quot;</span><span class="na"> type</span><span class="p">=</span><span class="s2">&quot;checkbox&quot;</span><span class="na"> required</span><span class="p">=</span>true
+</span><span class='line'>      <span class="nt">label</span><span class="na"> for</span><span class="p">=</span><span class="s2">&quot;field_terms&quot;</span>
+</span><span class='line'>      <span class="nt">label</span><span class="na"> for</span><span class="p">=</span><span class="s2">&quot;field_terms&quot;</span> С правилами пользования сервисом согласен
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<figure class='code'><figcaption><span>css style.scss </span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+</pre></td><td class='code'><pre><code class='scss'><span class='line'>  <span class="nn">#field_terms</span> <span class="p">{</span>
+</span><span class='line'>    <span class="c1">//скрываем defoult</span>
+</span><span class='line'>    <span class="na">position</span><span class="o">:</span> <span class="no">absolute</span><span class="p">;</span>
+</span><span class='line'>    <span class="na">opacity</span><span class="o">:</span> <span class="mi">0</span><span class="p">;</span>
+</span><span class='line'>    <span class="c1">//передвигаем окошко ошибки</span>
+</span><span class='line'>    <span class="na">top</span><span class="o">:</span> <span class="mi">40</span><span class="kt">px</span><span class="p">;</span>
+</span><span class='line'>    <span class="na">left</span><span class="o">:</span> <span class="mi">15</span><span class="kt">px</span><span class="p">;</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="nn">#field_terms</span> <span class="o">+</span> <span class="nt">label</span> <span class="p">{</span>
+</span><span class='line'>    <span class="c1">//показываем новый checkbox</span>
+</span><span class='line'>    <span class="na">background</span><span class="o">:</span> <span class="nf">image_url</span><span class="p">(</span><span class="s1">&#39;</span><span class="s2">acceptoff.png&#39;</span><span class="p">)</span> <span class="no">no-repeat</span><span class="p">;</span>
+</span><span class='line'>    <span class="na">height</span><span class="o">:</span> <span class="mi">50</span><span class="kt">px</span><span class="p">;</span>
+</span><span class='line'>    <span class="na">width</span><span class="o">:</span> <span class="mi">50</span><span class="kt">px</span><span class="p">;</span>
+</span><span class='line'>    <span class="nt">display</span><span class="nd">:inline-block</span><span class="o">;</span>
+</span><span class='line'>    <span class="nt">padding</span><span class="nd">:</span> <span class="nt">0</span> <span class="nt">0</span> <span class="nt">0</span> <span class="nt">0px</span><span class="o">;</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="nn">#field_terms</span><span class="nd">:checked</span> <span class="o">+</span> <span class="nt">label</span> <span class="p">{</span>
+</span><span class='line'>    <span class="c1">//показываем новый нажатый checkbox</span>
+</span><span class='line'>    <span class="na">background</span><span class="o">:</span> <span class="nf">image_url</span><span class="p">(</span><span class="s1">&#39;</span><span class="s2">accepton.png&#39;</span><span class="p">)</span> <span class="no">no-repeat</span><span class="p">;</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="nn">#field_terms</span> <span class="o">+</span> <span class="nt">label</span><span class="o">,</span> <span class="nn">#field_terms</span> <span class="o">+</span> <span class="nt">label</span> <span class="o">+</span> <span class="nt">label</span> <span class="p">{</span>
+</span><span class='line'>    <span class="na">cursor</span><span class="o">:</span> <span class="no">pointer</span><span class="p">;</span>
+</span><span class='line'>  <span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h2>Многострочная строчка с разными стилями строк</h2>
+
+<p>На самом деле никакая это не кнопка. Это будет стилизованная под кнопку ссылка с div внутри.</p>
+
+<figure class='code'><figcaption><span>html.slim </span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='slim'><span class='line'>  <span class="nc">.inline-block</span>
+</span><span class='line'>    <span class="cp">/ Видимая ссылка маскирующаяся под кнопку, при нажатии на которую вызывается нажатие на настоящую</span>
+</span><span class='line'>    <span class="nc">.button</span>
+</span><span class='line'>      <span class="nt">a</span><span class="na"> href</span><span class="p">=</span><span class="s2">&quot;javascript:;&quot;</span><span class="na"> onclick</span><span class="p">=</span><span class="s2">&quot;document.getElementById(&#39;submit&#39;).click();&quot;</span><span class="na"> class</span><span class="p">=</span><span class="s2">&quot;text&quot;</span>
+</span><span class='line'>        . Заплатить&lt;br&gt;много денег
+</span><span class='line'>    <span class="cp">/ Невидимая настоящая</span>
+</span><span class='line'>    <span class="p">=</span> <span class="n">submit_tag</span><span class="p">(</span><span class="s2">&quot;Заплатить много денег&quot;</span><span class="p">,</span> <span class="nb">id</span><span class="p">:</span> <span class="s2">&quot;submit&quot;</span><span class="p">,</span> <span class="ss">hidden</span><span class="p">:</span> <span class="kp">true</span><span class="p">)</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<figure class='code'><figcaption><span>style.scss </span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+</pre></td><td class='code'><pre><code class='scss'><span class='line'>  <span class="nc">.text</span> <span class="nt">div</span> <span class="p">{</span>
+</span><span class='line'>    <span class="na">font-size</span><span class="o">:</span><span class="mi">16</span><span class="kt">px</span><span class="p">;</span>
+</span><span class='line'>    <span class="na">color</span><span class="o">:</span> <span class="nb">black</span><span class="p">;</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="nc">.text</span> <span class="nt">div</span><span class="nd">:first-line</span> <span class="p">{</span>
+</span><span class='line'>    <span class="c1">//отдельный стиль для первой строки</span>
+</span><span class='line'>    <span class="na">font-size</span><span class="o">:</span><span class="mi">20</span><span class="kt">px</span><span class="p">;</span>
+</span><span class='line'>    <span class="nt">font-weight</span><span class="nd">:bold</span><span class="o">;</span>
+</span><span class='line'>  <span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+]]></content>
+  </entry>
+  
+  <entry>
     <title type="html"><![CDATA[Пишем Spoiler-plugin для Octopress]]></title>
     <link href="http://ggoha.github.io/blog/2016/12/06/pishiem-spoiler-plugin-dlia-octopress/"/>
     <updated>2016-12-06T18:08:30+03:00</updated>
     <id>http://ggoha.github.io/blog/2016/12/06/pishiem-spoiler-plugin-dlia-octopress</id>
     <content type="html"><![CDATA[<p>Мне изначально хотелось скрывать некоторые части постов под спойлер, например вот так
-<img src="http://ggoha.github.io/images/spoiler.png">
-Я смог найти только вот <a href="https://github.com/seanhagen/octopress-spoiler-tag/blob/master/spoiler.rb">это</a>
+<img src="http://ggoha.github.io/images/spoiler.png"></p>
+
+<p>Я смог найти только вот <a href="https://github.com/seanhagen/octopress-spoiler-tag/blob/master/spoiler.rb">это</a>
 Но меня это не устраивало, так как это был однострочный спойлер, например, для &ldquo;спойлеров&rdquo; в фильме. Я же хотел скрывать некоторую часть текста, например, описание исправлений ошибок, которые в большинстве случаев не имеет смысла показывать.
 Поэтому я решил написать его сам. Кроме того, я решил не использовать js, а обойтись только HTML/CSS.</p>
 
@@ -35,30 +204,30 @@
 <p>Основная идея следующая
 Переключатель представляет собой checkbox, для нажатого check с помощью селектора + (выбирающего следующие элементы) мы устанавливаем display:none для спойлерных объектов.</p>
 
-<div id='octopress-spoiler-tag'><input type='checkbox' id='octopress-spoiler-tag-4' class='octopress-spoiler-tag-head' checked/><label for='octopress-spoiler-tag-4'>Пояснение#1</label><div id='octopress-spoiler'>
+<p><div class='octopress-spoiler-block'><input type='checkbox' id='octopress-spoiler-block-4'       class='octopress-spoiler-block-head' checked/><label for='octopress-spoiler-block-4'>Пояснение#1         </label><div class='octopress-spoiler'>
   <figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>.octopress-spoiler-tag + label {
+</pre></td><td class='code'><pre><code class=''><span class='line'>.octopress-spoiler-block + label {
 </span><span class='line'>      cursor: pointer;
 </span><span class='line'>    }</span></code></pre></td></tr></table></div></figure>
   Позволяет изменять значение checkbox-a при нажатии на связанную с ним по id надпись. 
-</div></div>
+</div></div></p>
 
 
 
 
-<div id='octopress-spoiler-tag'><input type='checkbox' id='octopress-spoiler-tag-5' class='octopress-spoiler-tag-head' checked/><label for='octopress-spoiler-tag-5'>Пояснение#2</label><div id='octopress-spoiler'>
+<p><div class='octopress-spoiler-block'><input type='checkbox' id='octopress-spoiler-block-5'       class='octopress-spoiler-block-head' checked/><label for='octopress-spoiler-block-5'>Пояснение#2         </label><div class='octopress-spoiler'>
   <figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
 <span class='line-number'>4</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>.octopress-spoiler-tag:not(checked) {
+</pre></td><td class='code'><pre><code class=''><span class='line'>.octopress-spoiler-block:not(checked) {
 </span><span class='line'>      position: absolute;
 </span><span class='line'>      opacity: 0;
 </span><span class='line'>    }</span></code></pre></td></tr></table></div></figure>
   Убирает с глаз долой дефолтный checkbox.
-</div></div>
+</div></div></p>
 
 
 <h2>Ruby</h2>
@@ -88,10 +257,12 @@
 <span class='line-number'>20</span>
 <span class='line-number'>21</span>
 <span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
 </pre></td><td class='code'><pre><code class='rb'><span class='line'><span class="k">module</span> <span class="nn">Jekyll</span>
 </span><span class='line'>  <span class="k">class</span> <span class="nc">Spoiler</span> <span class="o">&lt;</span> <span class="no">Liquid</span><span class="o">::</span><span class="no">Block</span>
-</span><span class='line'>  <span class="c1">#Зависит от того, хотим ли мы блок (многострочный как blockquote) или тег (однострочный как image)</span>
-</span><span class='line'>    <span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="n">tag_name</span><span class="p">,</span> <span class="n">text</span><span class="p">,</span> <span class="n">tokens</span><span class="p">)</span>
+</span><span class='line'>  <span class="c1">#Зависит от того блок (многострочный как blockquote) это или тег (однострочный как image)</span>
+</span><span class='line'>    <span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="n">block_name</span><span class="p">,</span> <span class="n">text</span><span class="p">,</span> <span class="n">tokens</span><span class="p">)</span>
 </span><span class='line'>    <span class="c1">#собственно инициализация</span>
 </span><span class='line'>      <span class="c1">#здесь нам делать особо нечего</span>
 </span><span class='line'>      <span class="c1">#но возможно есть что инициализировать классу, что выше в цепочке наследования</span>
@@ -104,7 +275,9 @@
 </span><span class='line'>      <span class="c1">#получаем результат render-a предка</span>
 </span><span class='line'>      <span class="n">quote</span> <span class="o">=</span> <span class="k">super</span>
 </span><span class='line'>      <span class="c1">#оборачиваем в div, добавлем checkbox и label</span>
-</span><span class='line'>      <span class="s2">&quot;&lt;div id=&#39;octopress-spoiler-tag&#39;&gt;&lt;input type=&#39;checkbox&#39; id=&#39;octopress-spoiler-tag&#39; class=&#39;octopress-spoiler-tag-head&#39; checked/&gt;&lt;label for=&#39;octopress-spoiler-tag&#39;&gt;</span><span class="si">#{</span><span class="vi">@text</span><span class="si">}</span><span class="s2">&lt;/label&gt;&lt;div id=&#39;octopress-spoiler&#39;&gt;&quot;</span><span class="o">+</span><span class="n">quote</span><span class="o">+</span><span class="s2">&quot;&lt;/div&gt;&lt;/div&gt;&quot;</span>
+</span><span class='line'>      <span class="s2">&quot;&lt;div id=&#39;octopress-spoiler-block&#39;&gt;&lt;input type=&#39;checkbox&#39; id=&#39;octopress-spoiler-block&#39; \</span>
+</span><span class='line'><span class="s2">      class=&#39;octopress-spoiler-block-head&#39; checked/&gt;&lt;label for=&#39;octopress-spoiler-block&#39;&gt; \ </span>
+</span><span class='line'><span class="s2">      </span><span class="si">#{</span><span class="vi">@text</span><span class="si">}</span><span class="s2"> &lt;/label&gt;&lt;div id=&#39;octopress-spoiler&#39;&gt;&quot;</span><span class="o">+</span><span class="n">quote</span><span class="o">+</span><span class="s2">&quot;&lt;/div&gt;&lt;/div&gt;&quot;</span>
 </span><span class='line'>    <span class="k">end</span>
 </span><span class='line'>
 </span><span class='line'>  <span class="k">end</span>
@@ -113,7 +286,7 @@
 </span></code></pre></td></tr></table></div></figure>
 
 
-<div id='octopress-spoiler-tag'><input type='checkbox' id='octopress-spoiler-tag-6' class='octopress-spoiler-tag-head' checked/><label for='octopress-spoiler-tag-6'>Для поддержки нескольких спойлеров</label><div id='octopress-spoiler'>
+<p><div class='octopress-spoiler-block'><input type='checkbox' id='octopress-spoiler-block-6'       class='octopress-spoiler-block-head' checked/><label for='octopress-spoiler-block-6'>Для поддержки нескольких спойлеров         </label><div class='octopress-spoiler'>
   Нам необходимо понимать к какому checkbox относится label, это можно сделать с использованием id. Для этого нужно каждому спойлеру присвоить свой уникальный номер. В этом нам помогут переменные класса.
   <figure class='code'><figcaption><span>spoiler.rb </span></figcaption>
 <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
@@ -126,24 +299,33 @@
 <span class='line-number'>8</span>
 <span class='line-number'>9</span>
 <span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
 </pre></td><td class='code'><pre><code class='rb'><span class='line'>    <span class="k">class</span> <span class="nc">Spoiler</span> <span class="o">&lt;</span> <span class="no">Liquid</span><span class="o">::</span><span class="no">Block</span>
 </span><span class='line'>      <span class="vc">@@sasa</span> <span class="o">=</span> <span class="mi">0</span>
 </span><span class='line'>    <span class="o">.</span><span class="n">.</span><span class="o">.</span>
 </span><span class='line'>      <span class="k">def</span> <span class="nf">render</span><span class="p">(</span><span class="n">context</span><span class="p">)</span>
 </span><span class='line'>        <span class="n">quote</span> <span class="o">=</span> <span class="k">super</span>
 </span><span class='line'>        <span class="vc">@@sasa</span> <span class="o">=</span> <span class="vc">@@sasa</span> <span class="o">+</span> <span class="mi">1</span>
-</span><span class='line'>        <span class="s2">&quot;&lt;div id=&#39;octopress-spoiler-tag&#39;&gt;&lt;input type=&#39;checkbox&#39; id=&#39;octopress-spoiler-tag-</span><span class="si">#{</span><span class="vc">@@sasa</span><span class="si">}</span><span class="s2">&#39; class=&#39;octopress-spoiler-tag-head&#39; checked/&gt;&lt;label for=&#39;octopress-spoiler-tag-</span><span class="si">#{</span><span class="vc">@@sasa</span><span class="si">}</span><span class="s2">&#39;&gt;</span><span class="si">#{</span><span class="vi">@text</span><span class="si">}</span><span class="s2">&lt;/label&gt;&lt;div id=&#39;octopress-spoiler&#39;&gt;&quot;</span><span class="o">+</span><span class="n">quote</span><span class="o">+</span><span class="s2">&quot;&lt;/div&gt;&lt;/div&gt;&quot;</span>
+</span><span class='line'>        <span class="s2">&quot;&lt;p&gt;&lt;div class=&#39;octopress-spoiler-block&#39;&gt;&lt;input type=&#39;checkbox&#39; \</span>
+</span><span class='line'><span class="s2">        id=&#39;octopress-spoiler-block-</span><span class="si">#{</span><span class="vc">@@sasa</span><span class="si">}</span><span class="s2">&#39; class=&#39;octopress-spoiler-block-head&#39; \</span>
+</span><span class='line'><span class="s2">        checked/&gt;&lt;label for=&#39;octopress-spoiler-block-</span><span class="si">#{</span><span class="vc">@@sasa</span><span class="si">}</span><span class="s2">&#39;&gt;</span><span class="si">#{</span><span class="vi">@text</span><span class="si">}</span><span class="s2"> \</span>
+</span><span class='line'><span class="s2">        &lt;/label&gt;&lt;div class=&#39;octopress-spoiler&#39;&gt;&quot;</span><span class="o">+</span><span class="n">quote</span><span class="o">+</span><span class="s2">&quot;&lt;/div&gt;&lt;/div&gt;&lt;/p&gt;&quot;</span>
 </span><span class='line'>      <span class="k">end</span>
 </span><span class='line'>    <span class="p">}</span>
 </span><span class='line'>
 </span></code></pre></td></tr></table></div></figure>
   При каждом новом рендере, номер в id будет увеличиваться, что нам и необходимо.
-</div></div>
+</div></div></p>
 
+
+<p>К сожалению, сразу формить все это в виде гема не удалось, возможно это материал для одной из следующих заметок</p>
 
 <h2>Литература</h2>
 
-<p><a href="http://everstudent.ru/blog/htmlcss/30-css-seletors-to-memorize/">1</a></p>
+<p>При подготовке я много интересного для себя подчерпнул из <a href="http://everstudent.ru/blog/htmlcss/30-css-seletors-to-memorize/">1</a>
+и <a href="http://everstudent.ru/blog/htmlcss/30-css-seletors-to-memorize/">2</a></p>
 ]]></content>
   </entry>
   

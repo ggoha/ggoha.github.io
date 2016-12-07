@@ -1,0 +1,356 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Страница принятия пользовательского соглашения - Иногда я делаю сайты</title>
+  <meta name="author" content="ggoha">
+
+  
+  <meta name="description" content="Схематично страница с принятием пользовательского соглашения выглядит так Нечто такое и мы будем реализовывать Текст договора Вручную оформлять этот &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://ggoha.github.io/blog/2016/12/07/stranitsa-priniatiia-pol'zovatiel'skogho-soghlashieniia/">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/atom.xml" rel="alternate" title="Иногда я делаю сайты" type="application/atom+xml">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  <script>!window.jQuery && document.write(unescape('%3Cscript src="/javascripts/libs/jquery.min.js"%3E%3C/script%3E'))</script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="//fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="//fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+  
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">Иногда я делаю сайты</a></h1>
+  
+    <h2>Что-то вроде персонального блога.</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="https://www.google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="sitesearch" value="ggoha.github.io">
+    <input class="search" type="text" name="q" results="0" placeholder="Поиск"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Блог</a></li>
+  <li><a href="/blog/archives">Архив</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">Страница принятия пользовательского соглашения</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+<time class='entry-date' datetime='2016-12-07T20:51:16+03:00'><span class='date'><span class='date-month'>Dec</span> <span class='date-day'>7</span><span class='date-suffix'>th</span>, <span class='date-year'>2016</span></span> <span class='time'>8:51 pm</span></time>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>Схематично страница с принятием пользовательского соглашения выглядит так
+<img src="/images/maket1.png">
+Нечто такое и мы будем реализовывать</p>
+
+<!-- more -->
+
+
+<h2>Текст договора</h2>
+
+<p>Вручную оформлять этот многостраничный договор с пунктами и подпунктами в html на странице долго и некрасиво. Будем выгружать его из файла.</p>
+
+<figure class='code'><figcaption><span>slim </span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>= File.read "DOGOVOR.txt"</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Списки и подсписки перенеслись нормально, а вот с переносы строк html не воспринимает. Это сожно исправить с помощью хелпера simple format, он переводит <strong>\n</strong> в <strong>&lt;br></strong>. Кроме того нужно показать, что этот текст уже содержит html-теги с помощью html_safe.</p>
+
+<figure class='code'><figcaption><span>slim </span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>= simple_format(File.read "DOGOVOR.txt").html_safe</span></code></pre></td></tr></table></div></figure>
+
+
+<h2>Согласие с договором</h2>
+
+<p>Мы хотим чтобы без нажатого принятия договора не происходил переход к следующей странице. С появлением html5 это стало сделать гораздо легче. Для этого нам понадобится атрибут required примененный к checkbox.</p>
+
+<figure class='code'><figcaption><span>slim </span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>= form_tag() do
+</span><span class='line'>  input id="field_terms" type="checkbox" required=true
+</span><span class='line'>  = submit_tag("Заплатить")</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Для русификации ошибки</p>
+
+<figure class='code'><figcaption><span>javascript </span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>document.getElementById("field_terms").setCustomValidity("Для продолжения оплаты, Вы должны принять правила пользования");</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Что бы использовать вместо стандартного checkbox свою картинку, придется скрыть defoult, а изображение показывать вместо связанного labela. Связь по id checkbox позволяет изменять значение при клике на соответствующий label.</p>
+
+<figure class='code'><figcaption><span>form.html.slim </span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='slim'><span class='line'>      <span class="nt">input</span><span class="na">  id</span><span class="p">=</span><span class="s2">&quot;field_terms&quot;</span><span class="na"> type</span><span class="p">=</span><span class="s2">&quot;checkbox&quot;</span><span class="na"> required</span><span class="p">=</span>true
+</span><span class='line'>      <span class="nt">label</span><span class="na"> for</span><span class="p">=</span><span class="s2">&quot;field_terms&quot;</span>
+</span><span class='line'>      <span class="nt">label</span><span class="na"> for</span><span class="p">=</span><span class="s2">&quot;field_terms&quot;</span> С правилами пользования сервисом согласен
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<figure class='code'><figcaption><span>css style.scss </span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+</pre></td><td class='code'><pre><code class='scss'><span class='line'>  <span class="nn">#field_terms</span> <span class="p">{</span>
+</span><span class='line'>    <span class="c1">//скрываем defoult</span>
+</span><span class='line'>    <span class="na">position</span><span class="o">:</span> <span class="no">absolute</span><span class="p">;</span>
+</span><span class='line'>    <span class="na">opacity</span><span class="o">:</span> <span class="mi">0</span><span class="p">;</span>
+</span><span class='line'>    <span class="c1">//передвигаем окошко ошибки</span>
+</span><span class='line'>    <span class="na">top</span><span class="o">:</span> <span class="mi">40</span><span class="kt">px</span><span class="p">;</span>
+</span><span class='line'>    <span class="na">left</span><span class="o">:</span> <span class="mi">15</span><span class="kt">px</span><span class="p">;</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="nn">#field_terms</span> <span class="o">+</span> <span class="nt">label</span> <span class="p">{</span>
+</span><span class='line'>    <span class="c1">//показываем новый checkbox</span>
+</span><span class='line'>    <span class="na">background</span><span class="o">:</span> <span class="nf">image_url</span><span class="p">(</span><span class="s1">&#39;</span><span class="s2">acceptoff.png&#39;</span><span class="p">)</span> <span class="no">no-repeat</span><span class="p">;</span>
+</span><span class='line'>    <span class="na">height</span><span class="o">:</span> <span class="mi">50</span><span class="kt">px</span><span class="p">;</span>
+</span><span class='line'>    <span class="na">width</span><span class="o">:</span> <span class="mi">50</span><span class="kt">px</span><span class="p">;</span>
+</span><span class='line'>    <span class="nt">display</span><span class="nd">:inline-block</span><span class="o">;</span>
+</span><span class='line'>    <span class="nt">padding</span><span class="nd">:</span> <span class="nt">0</span> <span class="nt">0</span> <span class="nt">0</span> <span class="nt">0px</span><span class="o">;</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="nn">#field_terms</span><span class="nd">:checked</span> <span class="o">+</span> <span class="nt">label</span> <span class="p">{</span>
+</span><span class='line'>    <span class="c1">//показываем новый нажатый checkbox</span>
+</span><span class='line'>    <span class="na">background</span><span class="o">:</span> <span class="nf">image_url</span><span class="p">(</span><span class="s1">&#39;</span><span class="s2">accepton.png&#39;</span><span class="p">)</span> <span class="no">no-repeat</span><span class="p">;</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="nn">#field_terms</span> <span class="o">+</span> <span class="nt">label</span><span class="o">,</span> <span class="nn">#field_terms</span> <span class="o">+</span> <span class="nt">label</span> <span class="o">+</span> <span class="nt">label</span> <span class="p">{</span>
+</span><span class='line'>    <span class="na">cursor</span><span class="o">:</span> <span class="no">pointer</span><span class="p">;</span>
+</span><span class='line'>  <span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h2>Многострочная строчка с разными стилями строк</h2>
+
+<p>На самом деле никакая это не кнопка. Это будет стилизованная под кнопку ссылка с div внутри.</p>
+
+<figure class='code'><figcaption><span>html.slim </span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='slim'><span class='line'>  <span class="nc">.inline-block</span>
+</span><span class='line'>    <span class="cp">/ Видимая ссылка маскирующаяся под кнопку, при нажатии на которую вызывается нажатие на настоящую</span>
+</span><span class='line'>    <span class="nc">.button</span>
+</span><span class='line'>      <span class="nt">a</span><span class="na"> href</span><span class="p">=</span><span class="s2">&quot;javascript:;&quot;</span><span class="na"> onclick</span><span class="p">=</span><span class="s2">&quot;document.getElementById(&#39;submit&#39;).click();&quot;</span><span class="na"> class</span><span class="p">=</span><span class="s2">&quot;text&quot;</span>
+</span><span class='line'>        . Заплатить&lt;br&gt;много денег
+</span><span class='line'>    <span class="cp">/ Невидимая настоящая</span>
+</span><span class='line'>    <span class="p">=</span> <span class="n">submit_tag</span><span class="p">(</span><span class="s2">&quot;Заплатить много денег&quot;</span><span class="p">,</span> <span class="nb">id</span><span class="p">:</span> <span class="s2">&quot;submit&quot;</span><span class="p">,</span> <span class="ss">hidden</span><span class="p">:</span> <span class="kp">true</span><span class="p">)</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<figure class='code'><figcaption><span>style.scss </span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+</pre></td><td class='code'><pre><code class='scss'><span class='line'>  <span class="nc">.text</span> <span class="nt">div</span> <span class="p">{</span>
+</span><span class='line'>    <span class="na">font-size</span><span class="o">:</span><span class="mi">16</span><span class="kt">px</span><span class="p">;</span>
+</span><span class='line'>    <span class="na">color</span><span class="o">:</span> <span class="nb">black</span><span class="p">;</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="nc">.text</span> <span class="nt">div</span><span class="nd">:first-line</span> <span class="p">{</span>
+</span><span class='line'>    <span class="c1">//отдельный стиль для первой строки</span>
+</span><span class='line'>    <span class="na">font-size</span><span class="o">:</span><span class="mi">20</span><span class="kt">px</span><span class="p">;</span>
+</span><span class='line'>    <span class="nt">font-weight</span><span class="nd">:bold</span><span class="o">;</span>
+</span><span class='line'>  <span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Опубликовано <span class="fn">ggoha</span></span>
+
+      
+
+
+
+
+<time class='entry-date' datetime='2016-12-07T20:51:16+03:00'><span class='date'><span class='date-month'>Dec</span> <span class='date-day'>7</span><span class='date-suffix'>th</span>, <span class='date-year'>2016</span></span> <span class='time'>8:51 pm</span></time>
+      
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <a href="//twitter.com/share" class="twitter-share-button" data-url="http://ggoha.github.io/blog/2016/12/07/stranitsa-priniatiia-pol'zovatiel'skogho-soghlashieniia/" data-via="" data-counturl="http://ggoha.github.io/blog/2016/12/07/stranitsa-priniatiia-pol'zovatiel'skogho-soghlashieniia/" >Tweet</a>
+  
+  
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2016/12/06/pishiem-spoiler-plugin-dlia-octopress/" title="Previous Post: Пишем spoiler-plugin для octopress">&laquo; Пишем spoiler-plugin для octopress</a>
+      
+      
+    </p>
+  </footer>
+</article>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>Недавние посты</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2016/12/07/stranitsa-priniatiia-pol'zovatiel'skogho-soghlashieniia/">Страница принятия пользовательского соглашения</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2016/12/06/pishiem-spoiler-plugin-dlia-octopress/">Пишем Spoiler-plugin для Octopress</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2016/12/05/ssh-s-tieliefona/">Ssh с телефона</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2016/12/04/kratkii-spravochnik-po-ispanskomu-iazyku-na-1-siemiestr/">Краткий справочник по испанскому языку на 1 семестр</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2016/12/03/rieziervnoie-kopirovaniie-v-rails-prilozhienii/">Резервное копирование в Rails приложении</a>
+      </li>
+    
+  </ul>
+</section>
+
+
+
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2016 - ggoha -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+
+
+
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = '//platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>
