@@ -4,7 +4,7 @@
   <title><![CDATA[Тег: Octopress | Иногда я делаю сайты]]></title>
   <link href="http://ggoha.github.io/blog/categories/octopress/atom.xml" rel="self"/>
   <link href="http://ggoha.github.io/"/>
-  <updated>2016-12-07T22:40:06+03:00</updated>
+  <updated>2016-12-13T20:32:01+03:00</updated>
   <id>http://ggoha.github.io/</id>
   <author>
     <name><![CDATA[ggoha]]></name>
@@ -35,7 +35,7 @@
 
 <p>Основная идея следующая
 Переключатель представляет собой checkbox, для нажатого check с помощью селектора + (выбирающего следующие элементы) мы устанавливаем display:none для спойлерных объектов.
-<p><div class='octopress-spoiler-block'><input type='checkbox' id='octopress-spoiler-block-7'       class='octopress-spoiler-block-head' checked/><label for='octopress-spoiler-block-7'>Пояснение#1         </label><div class='octopress-spoiler'>
+<p><div class='octopress-spoiler-block'><input type='checkbox' id='octopress-spoiler-block-11'       class='octopress-spoiler-block-head' checked/><label for='octopress-spoiler-block-11'>Пояснение#1         </label><div class='octopress-spoiler'>
   <figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
@@ -45,7 +45,7 @@
   Позволяет изменять значение checkbox-a при нажатии на связанную с ним по id надпись.
 </div></div></p></p>
 
-<p><p><div class='octopress-spoiler-block'><input type='checkbox' id='octopress-spoiler-block-8'       class='octopress-spoiler-block-head' checked/><label for='octopress-spoiler-block-8'>Пояснение#2         </label><div class='octopress-spoiler'>
+<p><p><div class='octopress-spoiler-block'><input type='checkbox' id='octopress-spoiler-block-12'       class='octopress-spoiler-block-head' checked/><label for='octopress-spoiler-block-12'>Пояснение#2         </label><div class='octopress-spoiler'>
   <figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
@@ -112,7 +112,7 @@
 </span><span class='line'><span class="k">end</span>
 </span><span class='line'><span class="no">Liquid</span><span class="o">::</span><span class="no">Template</span><span class="o">.</span><span class="n">register_tag</span><span class="p">(</span><span class="o">&amp;</span><span class="n">lsquo</span><span class="p">;</span><span class="n">spoiler</span><span class="o">&amp;</span><span class="n">rsquo</span><span class="p">;,</span> <span class="no">Jekyll</span><span class="o">::</span><span class="no">Spoiler</span><span class="p">)</span>
 </span></code></pre></td></tr></table></div></figure>
-<p><div class='octopress-spoiler-block'><input type='checkbox' id='octopress-spoiler-block-9'       class='octopress-spoiler-block-head' checked/><label for='octopress-spoiler-block-9'>Для поддержки нескольких спойлеров         </label><div class='octopress-spoiler'>
+<p><div class='octopress-spoiler-block'><input type='checkbox' id='octopress-spoiler-block-13'       class='octopress-spoiler-block-head' checked/><label for='octopress-spoiler-block-13'>Для поддержки нескольких спойлеров         </label><div class='octopress-spoiler'>
   Нам необходимо понимать к какому checkbox относится label, это можно сделать с использованием id. Для этого нужно каждому спойлеру присвоить свой уникальный номер. В этом нам помогут переменные класса.
   <figure class='code'><figcaption><span>spoiler.rb </span></figcaption>
 <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>

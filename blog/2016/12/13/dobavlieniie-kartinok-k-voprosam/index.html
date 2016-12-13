@@ -1,0 +1,357 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Добавление картинок к вопросам - Иногда я делаю сайты</title>
+  <meta name="author" content="ggoha">
+
+  
+  <meta name="description" content="Возникла потребность, к некоторым вопросам добавлять картинки. Реализуем такую возможность, паралельно решив некоторые проблемы с CSS. Связь &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://ggoha.github.io/blog/2016/12/13/dobavlieniie-kartinok-k-voprosam/">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/atom.xml" rel="alternate" title="Иногда я делаю сайты" type="application/atom+xml">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  <script>!window.jQuery && document.write(unescape('%3Cscript src="/javascripts/libs/jquery.min.js"%3E%3C/script%3E'))</script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="//fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="//fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+  
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">Иногда я делаю сайты</a></h1>
+  
+    <h2>Что-то вроде персонального блога.</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="https://www.google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="sitesearch" value="ggoha.github.io">
+    <input class="search" type="text" name="q" results="0" placeholder="Поиск"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Блог</a></li>
+  <li><a href="/blog/archives">Архив</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">Добавление картинок к вопросам</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+<time class='entry-date' datetime='2016-12-13T19:30:58+03:00'><span class='date'><span class='date-month'>Dec</span> <span class='date-day'>13</span><span class='date-suffix'>th</span>, <span class='date-year'>2016</span></span> <span class='time'>7:30 pm</span></time>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>Возникла потребность, к некоторым вопросам добавлять картинки. Реализуем такую возможность, паралельно решив некоторые проблемы с CSS.</p>
+
+<!-- more -->
+
+
+<h1>Связь изображений с вопросами</h1>
+
+<p>Собственно генерируем новый загрузчик</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>rails generate uploader Picture</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Добавляем столбец в модель</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>rails g migration add_picture_to_question picture:string
+</span><span class='line'>rails db:migrate</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Добавляем загрузчик в модель</p>
+
+<figure class='code'><figcaption><span>question.rb </span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='rb'><span class='line'><span class="k">class</span> <span class="nc">Question</span> <span class="o">&lt;</span> <span class="no">ActiveRecord</span><span class="o">::</span><span class="no">Base</span>
+</span><span class='line'>  <span class="n">mount_uploader</span> <span class="ss">:picture</span><span class="p">,</span> <span class="no">PictureUploader</span>
+</span><span class='line'><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>В форме загрузки для поддержки множественной загрузки добавляем multipart</p>
+
+<figure class='code'><figcaption><span>tests/edit.html.slim </span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='slim'><span class='line'><span class="p">=</span> <span class="n">form_tag</span> <span class="n">import_test_path</span><span class="p">,</span> <span class="ss">multipart</span><span class="p">:</span> <span class="kp">true</span> <span class="k">do</span>
+</span><span class='line'>  <span class="p">=</span> <span class="n">label_tag</span> <span class="ss">:pictures</span><span class="p">,</span> <span class="s2">&quot;Файлы с картинками&quot;</span>
+</span><span class='line'>  <span class="p">=</span> <span class="n">file_field_tag</span> <span class="ss">:pictures</span><span class="p">,</span> <span class="ss">:multiple</span> <span class="o">=&gt;</span> <span class="kp">true</span><span class="p">,</span> <span class="nb">name</span><span class="p">:</span> <span class="s2">&quot;pictures[]&quot;</span>
+</span><span class='line'>  <span class="p">=</span> <span class="n">submit_tag</span> <span class="s2">&quot;Импортировать&quot;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Так как картинки загружаются отдельно от вопросов, в качестве связи между ними будет выступать название картинки, которое совпадает с номером вопроса</p>
+
+<figure class='code'><figcaption><span>test_controller.rb </span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class='rb'><span class='line'>  <span class="k">def</span> <span class="nf">import</span>
+</span><span class='line'>    <span class="vi">@test</span> <span class="o">=</span> <span class="no">Test</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">params</span><span class="o">[</span><span class="ss">:id</span><span class="o">]</span><span class="p">)</span>
+</span><span class='line'>    <span class="vi">@test</span><span class="o">.</span><span class="n">import</span><span class="p">(</span><span class="n">params</span><span class="o">[</span><span class="ss">:pictures</span><span class="o">]</span><span class="p">)</span>
+</span><span class='line'>    <span class="n">flash</span><span class="o">[</span><span class="ss">:success</span><span class="o">]</span> <span class="o">=</span> <span class="s2">&quot;Вопросы обновлены&quot;</span>
+</span><span class='line'>    <span class="n">render</span> <span class="s2">&quot;edit&quot;</span>
+</span><span class='line'>  <span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<figure class='code'><figcaption><span>test.rb </span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+</pre></td><td class='code'><pre><code class='rb'><span class='line'>  <span class="k">if</span> <span class="o">!</span><span class="n">pictures_files</span><span class="o">.</span><span class="n">blank?</span>
+</span><span class='line'>    <span class="n">questions</span> <span class="o">=</span> <span class="nb">self</span><span class="o">.</span><span class="n">questions</span><span class="o">.</span><span class="n">order</span><span class="p">(</span><span class="ss">:id</span><span class="p">)</span>
+</span><span class='line'>    <span class="n">pictures_files</span><span class="o">.</span><span class="n">each</span> <span class="k">do</span> <span class="o">|</span><span class="n">picture</span><span class="o">|</span>
+</span><span class='line'>      <span class="c1">#переводим название картинки в номер вопроса с учетом, что начинается с 0</span>
+</span><span class='line'>      <span class="n">question_index</span> <span class="o">=</span> <span class="no">File</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">picture</span><span class="o">.</span><span class="n">original_filename</span><span class="p">,</span> <span class="s2">&quot;.*&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">to_i</span><span class="o">-</span><span class="mi">1</span>
+</span><span class='line'>      <span class="n">questions</span><span class="o">[</span><span class="n">question_index</span><span class="o">].</span><span class="n">picture</span> <span class="o">=</span> <span class="n">picture</span>
+</span><span class='line'>      <span class="n">questions</span><span class="o">[</span><span class="n">question_index</span><span class="o">].</span><span class="n">save!</span>
+</span><span class='line'>    <span class="k">end</span>
+</span><span class='line'>  <span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Таким образом мы добавили к нашим вопросам картинки, правда без возможности их удаления.</p>
+
+<h1>Показ изображения</h1>
+
+<p>Мы хотим получить нечто такое
+<img src="/images/maket2.png">
+Для этого</p>
+
+<figure class='code'><figcaption><span>question.html.slim </span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='slim'><span class='line'>  <span class="nc">.bordered</span>
+</span><span class='line'>    <span class="nc">.description</span>
+</span><span class='line'>      <span class="p">=</span> <span class="n">image_tag</span><span class="p">(</span><span class="vi">@question</span><span class="o">.</span><span class="n">picture</span><span class="p">,</span> <span class="ss">class</span><span class="p">:</span> <span class="s2">&quot;right max100percent&quot;</span><span class="p">)</span>
+</span><span class='line'>      <span class="p">=</span> <span class="vi">@question</span><span class="o">.</span><span class="n">text</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<figure class='code'><figcaption><span>style.css </span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+</pre></td><td class='code'><pre><code class='css'><span class='line'><span class="nc">.right</span><span class="p">{</span>
+</span><span class='line'>  <span class="k">float</span><span class="o">:</span> <span class="k">right</span><span class="p">;</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="nc">.bordered</span><span class="p">{</span>
+</span><span class='line'>  <span class="k">border</span><span class="o">:</span> <span class="m">9px</span> <span class="k">solid</span> <span class="m">#f2f2f2</span><span class="p">;</span>
+</span><span class='line'>  <span class="k">overflow</span><span class="o">:</span> <span class="k">hidden</span><span class="p">;</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="nc">.max100percent</span><span class="p">{</span>
+</span><span class='line'>  <span class="k">max-width</span><span class="o">:</span> <span class="m">100%</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p><strong>float: right</strong> нужен для обтекания картинки тестом.
+<strong>overflow: hidden</strong> служит для правильной обработки изображения с <em>float</em> и свойства <em>border</em>
+А <strong>max-width: 100%</strong> не позволяет даже большим изображениям занять больше размера, чем им предоставлено.</p>
+
+<p><div class='octopress-spoiler-block'><input type='checkbox' id='octopress-spoiler-block-10'       class='octopress-spoiler-block-head' checked/><label for='octopress-spoiler-block-10'>Другое решение         </label><div class='octopress-spoiler'>
+В случае если максимальный размер поля для изображения известен, можно производить обработку изображения при загрузке и уменьшать ее до нужного размера
+  <figure class='code'><figcaption><span>picture_uploader.rb </span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='rb'><span class='line'>  <span class="k">class</span> <span class="nc">PictureUploader</span> <span class="o">&lt;</span> <span class="no">CarrierWave</span><span class="o">::</span><span class="no">Uploader</span><span class="o">::</span><span class="no">Base</span>
+</span><span class='line'>    <span class="kp">include</span> <span class="no">CarrierWave</span><span class="o">::</span><span class="no">MiniMagick</span>
+</span><span class='line'>    <span class="o">.</span><span class="n">.</span><span class="o">.</span>
+</span><span class='line'>    <span class="n">process</span> <span class="ss">resize_to_fill</span><span class="p">:</span> <span class="o">[</span><span class="mi">200</span><span class="p">,</span> <span class="mi">200</span><span class="o">]</span>
+</span><span class='line'>
+</span></code></pre></td></tr></table></div></figure>
+</div></div></p>
+
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Опубликовано <span class="fn">ggoha</span></span>
+
+      
+
+
+
+
+<time class='entry-date' datetime='2016-12-13T19:30:58+03:00'><span class='date'><span class='date-month'>Dec</span> <span class='date-day'>13</span><span class='date-suffix'>th</span>, <span class='date-year'>2016</span></span> <span class='time'>7:30 pm</span></time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/carrierwave/'>carrierwave</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <a href="//twitter.com/share" class="twitter-share-button" data-url="http://ggoha.github.io/blog/2016/12/13/dobavlieniie-kartinok-k-voprosam/" data-via="" data-counturl="http://ggoha.github.io/blog/2016/12/13/dobavlieniie-kartinok-k-voprosam/" >Tweet</a>
+  
+  
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2016/12/12/nastroika-biezopastnosti-v-carrierwave/" title="Previous Post: Настройка безопастности в carrierwave">&laquo; Настройка безопастности в carrierwave</a>
+      
+      
+    </p>
+  </footer>
+</article>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>Недавние посты</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2016/12/13/dobavlieniie-kartinok-k-voprosam/">Добавление картинок к вопросам</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2016/12/12/nastroika-biezopastnosti-v-carrierwave/">Настройка безопастности в Carrierwave</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2016/12/07/stranitsa-priniatiia-pol'zovatiel'skogho-soghlashieniia/">Страница принятия пользовательского соглашения</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2016/12/06/pishiem-spoiler-plugin-dlia-octopress/">Пишем Spoiler-plugin для Octopress</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2016/12/05/ssh-s-tieliefona/">Ssh с телефона</a>
+      </li>
+    
+  </ul>
+</section>
+
+
+
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2016 - ggoha -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+
+
+
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = '//platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>

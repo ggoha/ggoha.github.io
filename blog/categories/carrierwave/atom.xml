@@ -1,0 +1,319 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Тег: Carrierwave | Иногда я делаю сайты]]></title>
+  <link href="http://ggoha.github.io/blog/categories/carrierwave/atom.xml" rel="self"/>
+  <link href="http://ggoha.github.io/"/>
+  <updated>2016-12-13T20:32:01+03:00</updated>
+  <id>http://ggoha.github.io/</id>
+  <author>
+    <name><![CDATA[ggoha]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Добавление картинок к вопросам]]></title>
+    <link href="http://ggoha.github.io/blog/2016/12/13/dobavlieniie-kartinok-k-voprosam/"/>
+    <updated>2016-12-13T19:30:58+03:00</updated>
+    <id>http://ggoha.github.io/blog/2016/12/13/dobavlieniie-kartinok-k-voprosam</id>
+    <content type="html"><![CDATA[<p>Возникла потребность, к некоторым вопросам добавлять картинки. Реализуем такую возможность, паралельно решив некоторые проблемы с CSS.</p>
+
+<!-- more -->
+
+
+<h1>Связь изображений с вопросами</h1>
+
+<p>Собственно генерируем новый загрузчик
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>rails generate uploader Picture</span></code></pre></td></tr></table></div></figure>
+Добавляем столбец в модель
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>rails g migration add_picture_to_question picture:string
+</span><span class='line'>rails db:migrate</span></code></pre></td></tr></table></div></figure>
+Добавляем загрузчик в модель
+<figure class='code'><figcaption><span>question.rb </span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='rb'><span class='line'><span class="k">class</span> <span class="nc">Question</span> <span class="o">&amp;</span><span class="n">lt</span><span class="p">;</span> <span class="no">ActiveRecord</span><span class="o">::</span><span class="no">Base</span>
+</span><span class='line'>  <span class="n">mount_uploader</span> <span class="ss">:picture</span><span class="p">,</span> <span class="no">PictureUploader</span>
+</span><span class='line'><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure>
+В форме загрузки для поддержки множественной загрузки добавляем multipart
+<figure class='code'><figcaption><span>tests/edit.html.slim </span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='slim'><span class='line'><span class="p">=</span> <span class="n">form_tag</span> <span class="n">import_test_path</span><span class="p">,</span> <span class="ss">multipart</span><span class="p">:</span> <span class="kp">true</span> <span class="k">do</span>
+</span><span class='line'>  <span class="p">=</span> <span class="n">label_tag</span> <span class="ss">:pictures</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">ldquo</span><span class="p">;</span><span class="err">Файлы</span> <span class="err">с</span> <span class="err">картинками</span><span class="o">&amp;</span><span class="n">rdquo</span><span class="p">;</span>
+</span><span class='line'>  <span class="p">=</span> <span class="n">file_field_tag</span> <span class="ss">:pictures</span><span class="p">,</span> <span class="ss">:multiple</span> <span class="o">=&gt;</span> <span class="kp">true</span><span class="p">,</span> <span class="nb">name</span><span class="p">:</span> <span class="o">&amp;</span><span class="n">ldquo</span><span class="p">;</span><span class="n">pictures</span><span class="o">[]&amp;</span><span class="n">rdquo</span><span class="p">;</span>
+</span><span class='line'>  <span class="p">=</span> <span class="n">submit_tag</span> <span class="o">&amp;</span><span class="n">ldquo</span><span class="p">;</span><span class="err">Импортировать</span><span class="o">&amp;</span><span class="n">rdquo</span><span class="p">;</span>
+</span></code></pre></td></tr></table></div></figure>
+Так как картинки загружаются отдельно от вопросов, в качестве связи между ними будет выступать название картинки, которое совпадает с номером вопроса
+<figure class='code'><figcaption><span>test_controller.rb </span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class='rb'><span class='line'>  <span class="k">def</span> <span class="nf">import</span>
+</span><span class='line'>    <span class="vi">@test</span> <span class="o">=</span> <span class="no">Test</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">params</span><span class="o">[</span><span class="ss">:id</span><span class="o">]</span><span class="p">)</span>
+</span><span class='line'>    <span class="vi">@test</span><span class="o">.</span><span class="n">import</span><span class="p">(</span><span class="n">params</span><span class="o">[</span><span class="ss">:pictures</span><span class="o">]</span><span class="p">)</span>
+</span><span class='line'>    <span class="n">flash</span><span class="o">[</span><span class="ss">:success</span><span class="o">]</span> <span class="o">=</span> <span class="o">&amp;</span><span class="n">ldquo</span><span class="p">;</span><span class="err">Вопросы</span> <span class="err">обновлены</span><span class="o">&amp;</span><span class="n">rdquo</span><span class="p">;</span>
+</span><span class='line'>    <span class="n">render</span> <span class="o">&amp;</span><span class="n">ldquo</span><span class="p">;</span><span class="n">edit</span><span class="o">&amp;</span><span class="n">rdquo</span><span class="p">;</span> <span class="o">&lt;</span><span class="n">br</span><span class="o">/&gt;</span>
+</span><span class='line'>  <span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure>
+<figure class='code'><figcaption><span>test.rb </span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+</pre></td><td class='code'><pre><code class='rb'><span class='line'>  <span class="k">if</span> <span class="o">!</span><span class="n">pictures_files</span><span class="o">.</span><span class="n">blank?</span>
+</span><span class='line'>    <span class="n">questions</span> <span class="o">=</span> <span class="nb">self</span><span class="o">.</span><span class="n">questions</span><span class="o">.</span><span class="n">order</span><span class="p">(</span><span class="ss">:id</span><span class="p">)</span>
+</span><span class='line'>    <span class="n">pictures_files</span><span class="o">.</span><span class="n">each</span> <span class="k">do</span> <span class="o">|</span><span class="n">picture</span><span class="o">|</span>
+</span><span class='line'>      <span class="c1">#переводим название картинки в номер вопроса с учетом, что начинается с 0</span>
+</span><span class='line'>      <span class="n">question_index</span> <span class="o">=</span> <span class="no">File</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">picture</span><span class="o">.</span><span class="n">original_filename</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">ldquo</span><span class="p">;</span><span class="o">.</span><span class="n">*</span><span class="o">&amp;</span><span class="n">rdquo</span><span class="p">;)</span><span class="o">.</span><span class="n">to_i</span><span class="o">-</span><span class="mi">1</span>
+</span><span class='line'>      <span class="n">questions</span><span class="o">[</span><span class="n">question_index</span><span class="o">].</span><span class="n">picture</span> <span class="o">=</span> <span class="n">picture</span>
+</span><span class='line'>      <span class="n">questions</span><span class="o">[</span><span class="n">question_index</span><span class="o">].</span><span class="n">save!</span>
+</span><span class='line'>    <span class="k">end</span>
+</span><span class='line'>  <span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure>
+Таким образом мы добавили к нашим вопросам картинки, правда без возможности их удаления.</p>
+
+<h1>Показ изображения</h1>
+
+<p>Мы хотим получить нечто такое
+<img src="/images/maket2.png">
+Для этого
+<figure class='code'><figcaption><span>question.html.slim </span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='slim'><span class='line'>  <span class="nc">.bordered</span>
+</span><span class='line'>    <span class="nc">.description</span>
+</span><span class='line'>      <span class="p">=</span> <span class="n">image_tag</span><span class="p">(</span><span class="vi">@question</span><span class="o">.</span><span class="n">picture</span><span class="p">,</span> <span class="ss">class</span><span class="p">:</span> <span class="o">&amp;</span><span class="n">ldquo</span><span class="p">;</span><span class="n">right</span> <span class="n">max100percent</span><span class="o">&amp;</span><span class="n">rdquo</span><span class="p">;)</span>
+</span><span class='line'>      <span class="p">=</span> <span class="vi">@question</span><span class="o">.</span><span class="n">text</span>
+</span></code></pre></td></tr></table></div></figure>
+<figure class='code'><figcaption><span>style.css </span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+</pre></td><td class='code'><pre><code class='css'><span class='line'><span class="nc">.right</span><span class="p">{</span>
+</span><span class='line'>  <span class="k">float</span><span class="o">:</span> <span class="k">right</span><span class="p">;</span>
+</span><span class='line'><span class="p">}</span><span class="o">&lt;/</span><span class="nt">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="nt">p</span><span class="o">&gt;</span><span class="nc">.bordered</span><span class="p">{</span>
+</span><span class='line'>  <span class="k">border</span><span class="o">:</span> <span class="m">9px</span> <span class="k">solid</span> <span class="m">#f2f2f2</span><span class="p">;</span>
+</span><span class='line'>  <span class="k">overflow</span><span class="o">:</span> <span class="k">hidden</span><span class="p">;</span>
+</span><span class='line'><span class="p">}</span><span class="o">&lt;/</span><span class="nt">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="nt">p</span><span class="o">&gt;</span><span class="nc">.max100percent</span><span class="p">{</span>
+</span><span class='line'>  <span class="k">max-width</span><span class="o">:</span> <span class="m">100%</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+<strong>float: right</strong> нужен для обтекания картинки тестом.
+<strong>overflow: hidden</strong> служит для правильной обработки изображения с <em>float</em> и свойства <em>border</em>
+А <strong>max-width: 100%</strong> не позволяет даже большим изображениям занять больше размера, чем им предоставлено.
+<p><div class='octopress-spoiler-block'><input type='checkbox' id='octopress-spoiler-block-14'       class='octopress-spoiler-block-head' checked/><label for='octopress-spoiler-block-14'>Другое решение         </label><div class='octopress-spoiler'>
+В случае если максимальный размер поля для изображения известен, можно производить обработку изображения при загрузке и уменьшать ее до нужного размера
+  <figure class='code'><figcaption><span>picture_uploader.rb </span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='rb'><span class='line'>  <span class="k">class</span> <span class="nc">PictureUploader</span> <span class="o">&amp;</span><span class="n">lt</span><span class="p">;</span> <span class="no">CarrierWave</span><span class="o">::</span><span class="no">Uploader</span><span class="o">::</span><span class="no">Base</span>
+</span><span class='line'>    <span class="kp">include</span> <span class="no">CarrierWave</span><span class="o">::</span><span class="no">MiniMagick</span>
+</span><span class='line'>    <span class="o">&amp;</span><span class="n">hellip</span><span class="p">;</span>
+</span><span class='line'>    <span class="n">process</span> <span class="ss">resize_to_fill</span><span class="p">:</span> <span class="o">[</span><span class="mi">200</span><span class="p">,</span> <span class="mi">200</span><span class="o">]</span>
+</span><span class='line'>
+</span></code></pre></td></tr></table></div></figure>
+</div></div></p></p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Настройка безопастности в Carrierwave]]></title>
+    <link href="http://ggoha.github.io/blog/2016/12/12/nastroika-biezopastnosti-v-carrierwave/"/>
+    <updated>2016-12-12T01:27:19+03:00</updated>
+    <id>http://ggoha.github.io/blog/2016/12/12/nastroika-biezopastnosti-v-carrierwave</id>
+    <content type="html"><![CDATA[<p>Достаточно часто возникает ситуация, при которой, загружаемые на сервер файлы не должны быть широкодоступны. Будем решать данную проблему с использованием gema carrierwave.</p>
+
+<!-- more -->
+
+
+<h1>Создаем модель</h1>
+
+<p>Собственно генерируем новый загрузчик
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>rails generate uploader Picture</span></code></pre></td></tr></table></div></figure>
+Добавляем столбец в модель
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>rails g migration add_picture_to_user picture:string
+</span><span class='line'>rails db:migrate</span></code></pre></td></tr></table></div></figure>
+Добавляем загрузчик в модель
+<figure class='code'><figcaption><span>question.rb </span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='rb'><span class='line'><span class="k">class</span> <span class="nc">User</span> <span class="o">&amp;</span><span class="n">lt</span><span class="p">;</span> <span class="no">ActiveRecord</span><span class="o">::</span><span class="no">Base</span>
+</span><span class='line'>  <span class="n">mount_uploader</span> <span class="ss">:picture</span><span class="p">,</span> <span class="no">PictureUploader</span>
+</span><span class='line'><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure></p>
+
+<h1>Производим настройку</h1>
+
+<p>Для начала нужно изменить папку, куда carriewave сохраняет файлы, по умолчанию, сохранение производится в общедоступный <em>public</em>.
+<figure class='code'><figcaption><span>picure_uploader.rb </span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='rb'><span class='line'>  <span class="k">def</span> <span class="nf">store_dir</span>
+</span><span class='line'>    <span class="o">&amp;</span><span class="n">ldquo</span><span class="p">;</span><span class="c1">#{Rails.root}/uploads/#{model.class.to_s.underscore}/#{mounted_as}/#{model.id}&amp;rdquo;</span>
+</span><span class='line'>  <span class="k">end</span><span class="o">&lt;</span><span class="sr">/p&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="sr">&lt;p&gt;  def cache_dir</span>
+</span><span class='line'><span class="sr">    &amp;ldquo;</span><span class="si">#{</span><span class="no">Rails</span><span class="o">.</span><span class="n">root</span><span class="si">}</span><span class="sr">/u</span><span class="n">ploads</span><span class="o">/</span><span class="n">tmp</span><span class="o">/</span><span class="c1">#{model.class.to_s.underscore}/#{mounted_as}/#{model.id}&amp;rdquo;</span>
+</span><span class='line'>  <span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure>
+Папка в корне не является общелоступной, и припопытке скачать файл по его url мы получим ошибку.
+<br>
+Дополнительно стоит ограничить загружаемые форматы и типы, например, для изображений
+<figure class='code'><figcaption><span>picure_uploader.rb </span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+</pre></td><td class='code'><pre><code class='rb'><span class='line'>  <span class="k">def</span> <span class="nf">extension_whitelist</span>
+</span><span class='line'>    <span class="sx">%w(jpg jpeg gif png)</span>
+</span><span class='line'>  <span class="k">end</span><span class="o">&lt;</span><span class="sr">/p&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="sr">&lt;p&gt;  def content_type_whitelist</span>
+</span><span class='line'><span class="sr">    /im</span><span class="n">age</span><span class="p">\</span><span class="o">//</span>
+</span><span class='line'>  <span class="k">end</span><span class="o">&lt;</span><span class="sr">/p&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="sr">&lt;p&gt;  def content_type_blacklist</span>
+</span><span class='line'><span class="sr">    [&amp;lsquo;application/</span><span class="n">text</span><span class="o">&amp;</span><span class="n">rsquo</span><span class="p">;,</span> <span class="o">&amp;</span><span class="n">lsquo</span><span class="p">;</span><span class="n">application</span><span class="o">/</span><span class="n">json</span><span class="o">&amp;</span><span class="n">rsquo</span><span class="p">;</span><span class="o">]</span>
+</span><span class='line'>  <span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure></p>
+
+<h1>Скачивание файлов</h1>
+
+<p>Чтобы получить доступ к этим файлам нам необходимо внести изменения в контроллер. Мы на уровне rails приложения можем решать, позволять скачивать файл пользователю или нет. Для этого мы будем использовать функцию <strong>send_file</strong>, которая вместо ренедера отправляет локальный файл.
+<figure class='code'><figcaption><span>users_controller.rb </span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='rb'><span class='line'><span class="o">&lt;</span><span class="n">br</span><span class="o">/&gt;</span>
+</span><span class='line'>  <span class="k">def</span> <span class="nf">download_scan</span>
+</span><span class='line'>    <span class="o">&amp;</span><span class="n">hellip</span><span class="p">;</span>
+</span><span class='line'>    <span class="c1">#Проверка доступа</span>
+</span><span class='line'>      <span class="n">send_file</span> <span class="n">olimpiad</span><span class="o">.</span><span class="n">solution</span><span class="o">.</span><span class="n">file</span><span class="o">.</span><span class="n">file</span><span class="p">,</span> <span class="ss">:x_sendfile</span><span class="o">=&gt;</span><span class="kp">true</span>
+</span><span class='line'>    <span class="k">end</span>
+</span><span class='line'>  <span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure>
+Теперь нам остатется только перенаправить запрос к данному контроллеру в роутинге.</p>
+
+<h1>Предпросмотр</h1>
+
+<p>Не особо относящая к теме запись. При загрузке пользователем картинки, можно показать ее предпросмотр с помощью небольшого js скрипта.
+<figure class='code'><figcaption><span>form.html.slim </span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+</pre></td><td class='code'><pre><code class='slim'><span class='line'>&lt;br/&gt;
+</span><span class='line'><span class="p">=</span> <span class="n">form_for</span> <span class="n">current_user</span><span class="p">,</span> <span class="ss">:html</span> <span class="o">=&gt;</span> <span class="p">{</span><span class="ss">:multipart</span> <span class="o">=&gt;</span> <span class="kp">true</span><span class="p">}</span> <span class="k">do</span> <span class="o">|</span><span class="n">f</span><span class="o">|</span>
+</span><span class='line'>  <span class="p">=</span> <span class="n">f</span><span class="o">.</span><span class="n">file_field</span> <span class="ss">:picture</span>
+</span><span class='line'>  <span class="nc">.upload-preview</span>
+</span><span class='line'>    <span class="nt">img</span>
+</span><span class='line'>  <span class="p">=</span> <span class="n">f</span><span class="o">.</span><span class="n">submit</span><span class="p">(</span><span class="o">&amp;</span><span class="n">ldquo</span><span class="p">;</span><span class="n">ok</span><span class="o">&amp;</span><span class="n">rdquo</span><span class="p">;)</span><span class="o">&lt;</span><span class="sr">/p&gt;</span>
+</span><span class='line'>
+</span><span class='line'>&lt;p&gt;javascript:
+</span><span class='line'>  $(document).ready(function(){
+</span><span class='line'>    <span class="nt">var</span> preview = $(&amp;ldquo;.upload-preview img&amp;rdquo;);&lt;/p&gt;
+</span><span class='line'>
+</span><span class='line'>&lt;pre&gt;&lt;code&gt;$(&quot;#user_picture&quot;).change(function(event){
+</span><span class='line'>   <span class="nt">var</span> input = $(event.currentTarget);
+</span><span class='line'>   <span class="nt">var</span> file = input[0].files[0];
+</span><span class='line'>   <span class="nt">var</span> reader = new FileReader();
+</span><span class='line'>   <span class="nt">reader</span><span class="nc">.onload</span><span class="p"> =</span> <span class="n">function</span><span class="p">(</span><span class="n">e</span><span class="p">){</span>
+</span><span class='line'>       <span class="nt">image_base64</span><span class="p"> =</span> <span class="n">e</span><span class="o">.</span><span class="n">target</span><span class="o">.</span><span class="n">result</span><span class="p">;</span>
+</span><span class='line'>       <span class="nt">preview</span><span class="nc">.attr</span>(&quot;src&quot;, image_base64);
+</span><span class='line'>   };
+</span><span class='line'>   <span class="nt">reader</span><span class="nc">.readAsDataURL</span>(file);
+</span><span class='line'>});
+</span><span class='line'>&lt;/code&gt;&lt;/pre&gt;
+</span><span class='line'>
+</span><span class='line'>&lt;p&gt;  });&lt;br/&gt;
+</span></code></pre></td></tr></table></div></figure></p>
+
+<h1>Примечание</h1>
+
+<p><p><div class='octopress-spoiler-block'><input type='checkbox' id='octopress-spoiler-block-15'       class='octopress-spoiler-block-head' checked/><label for='octopress-spoiler-block-15'>Напоминание         </label><div class='octopress-spoiler'>
+  Добавляем папку upload в .gitignore
+  <br>
+  Добавляем ее же в backup
+  <br>
+  Добавляем в shared папки в capfile
+</div></div></p></p>
+]]></content>
+  </entry>
+  
+</feed>
